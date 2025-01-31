@@ -11,6 +11,10 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        prim1: "var(--prim1)",
+        prim2: "var(--prim2)",
+        search: "var(--search)",
+        
       },
     },
   },
