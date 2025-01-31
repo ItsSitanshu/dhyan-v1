@@ -6,7 +6,7 @@ const App = () => {
       <header className="flex justify-between items-center p-6">
         <div className="flex items-center">
           <img alt="" className="h-10" src="/logo.svg" />
-          <span className="ml-2 text-xl font-semibold">OpenAI</span>
+          <span className="ml-2 text-xl font-semibold">DhyanAI</span>
         </div>
         <nav className="hidden md:flex space-x-6">
           <a className="hover:underline" href="#">
@@ -22,7 +22,7 @@ const App = () => {
             lorem
           </a>
         </nav>
-        <div className="hidden md:block">{/* Insert your SVG here */}</div>
+        <div className="hidden md:block"></div>
       </header>
       <main className="flex flex-col items-center text-center px-4 md:px-0">
         <p className="text-gray-400 mt-12">Lorem, ipsum dolor.</p>
@@ -30,13 +30,12 @@ const App = () => {
         <div className="flex flex-col md:flex-row items-center mt-8 space-y-4 md:space-y-0 md:space-x-4">
           <button className="bg-white text-black px-6 py-2 rounded-full font-semibold">
             Lorem, ipsum.
-            {/* You can add an arrow SVG here if needed */}
           </button>
           <a className="text-gray-400 hover:underline" href="#">
-            Lorem, ipsum dolor.{" "}
+            Lorem, ipsum dolor.
           </a>
           <a className="text-gray-400 hover:underline" href="#">
-            Lorem, ipsum dolor.{" "}
+            Lorem, ipsum dolor.
           </a>
         </div>
         <div className="max-w-2xl mt-12 text-gray-400">
@@ -60,24 +59,24 @@ const App = () => {
             iusto reiciendis eveniet.
             <a className="underline" href="">
               {" "}
-              chatgpt.com
+              dhyanai.com
             </a>
             .
           </p>
         </div>
-        <h2 className="text-2xl md:text-3xl font-bold mt-16">Samples</h2>
+        <h2 className="text-2xl md:text-3xl font-bold mt-16">lorem</h2>
         <div className="flex flex-wrap justify-center mt-8 space-x-4 space-y-4 md:space-y-0">
           <button className="bg-gray-800 text-white px-4 py-2 rounded-full">
-            Fix code
+            Lorem, ipsum.
           </button>
           <button className="bg-gray-800 text-white px-4 py-2 rounded-full">
-            Home security
+            Lorem, ipsum.
           </button>
           <button className="bg-gray-800 text-white px-4 py-2 rounded-full">
-            Fermat's Little Theorem
+            Lorem, ipsum dolor.
           </button>
           <button className="bg-gray-800 text-white px-4 py-2 rounded-full">
-            Neighbor introduction
+            Lorem, ipsum.
           </button>
         </div>
       </main>
