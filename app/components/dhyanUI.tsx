@@ -12,7 +12,13 @@ const DhyanUI = () => {
         <div>
           <div className="mb-6">
             <div className="flex flex-row items-center gap-3">
-              <Image src={logo} width={256} height={256} alt='Dhyan.AI' className="w-1/3 p-1 aspect-square"/>
+              <Image
+                src={logo}
+                width={256}
+                height={256}
+                alt="Dhyan.AI"
+                className="w-1/3 p-1 aspect-square"
+              />
               <h2 className="text-3xl mt-1 font-nue">Dhyan.AI</h2>
             </div>
             <div className="flex items-center">
