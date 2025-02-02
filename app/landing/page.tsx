@@ -80,6 +80,67 @@ const App = () => {
           </button>
         </div>
       </main>
+      <div className="bg-gray-900 text-white font-sans p-6 rounded-lg shadow-lg mt-12">
+        <div className="mb-4">
+          <p className="text-lg font-semibold">User</p>
+          <p className="text-gray-400">
+            this code is not working like i expect — how do i fix it?
+          </p>
+        </div>
+        <div className="bg-gray-700 p-4 rounded-lg mb-4">
+          <pre className="text-gray-300">
+            <code>
+              {`#include <stdio.h>
+
+int main() {
+    int numbers[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+    for (int i = 0; i < 10; i++) {
+        printf("Element %d: %d\n", i, numbers[i]);
+    }
+
+    return 0;
+}
+`}
+            </code>
+          </pre>
+        </div>
+        <div className="mb-4">
+          <p className="text-lg font-semibold">DhyanAI</p>
+          <p className="text-gray-400">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi,
+            officia nihil. Assumenda sit ipsum facilis impedit fuga corrupti
+            debitis modi, dolores minima vitae accusamus repellat possimus id,
+            quod asperiores suscipit!
+          </p>
+        </div>
+        <div className="mb-4">
+          <p className="text-lg font-semibold">User</p>
+          <p className="text-gray-400">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam,
+            alias?
+          </p>
+        </div>
+        <div>
+          <p className="text-lg font-semibold">DhanAI</p>
+          <p className="text-gray-400">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptas
+            impedit dolorum eaque dignissimos. Sunt nihil earum iure non ipsa,
+            aliquam atque saepe harum repellendus vero incidunt molestias,
+            asperiores at rem.
+            <code className="bg-gray-600 p-1 rounded">lorem</code> Lorem ipsum
+            dolor sit amet consectetur adipisicing elit. Porro, officiis!
+            <code className="bg-gray-600 p-1 rounded">
+              Lorem ipsum dolor sit.
+            </code>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime hic
+            sint quasi at earum. Autem animi eveniet doloremque et? Ea.
+            <code className="bg-gray-600 p-1 rounded">lorem2</code>
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quo,
+            porro.
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
