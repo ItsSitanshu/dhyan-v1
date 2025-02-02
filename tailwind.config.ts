@@ -17,7 +17,7 @@ export default {
         foreground: "var(--foreground)",
         prim1: "var(--prim1)",
         prim2: "var(--prim2)",
-        search: "var(--search)",
+        bgsec: "var(--bgsec)",
         lprim: "var(--lprim)",
         psec: "var(--psec)",
         lsec: "var(--lsec)",
