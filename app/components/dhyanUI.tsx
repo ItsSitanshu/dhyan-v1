@@ -1,18 +1,19 @@
+"use client";
+
+import Image from "next/image";
 import React from "react";
+
+import logo from "@/app/assets/images/logo.svg";
 
 const DhyanUI = () => {
   return (
     <div className="h-screen flex">
-      <div className="w-64 bg-prim1 p-4 flex flex-col justify-between">
+      <div className="w-64 bg-search text-lsec p-4 flex flex-col justify-between">
         <div>
-          <div className="flex items-center justify-between mb-6">
-            <div className="w-6 h-6 bg-search"></div>
-            <div className="w-6 h-6 bg-search"></div>
-          </div>
           <div className="mb-6">
-            <div className="flex items-center mb-2">
-              <div className="w-6 h-6 bg-search mr-2"></div>
-              <h2 className="text-lg font-semibold">DhyanAI</h2>
+            <div className="flex flex-row items-center gap-3">
+              <Image src={logo} width={256} height={256} alt='Dhyan.AI' className="w-1/3 p-1 aspect-square"/>
+              <h2 className="text-3xl mt-1 font-nue">Dhyan.AI</h2>
             </div>
             <div className="flex items-center">
               <div className="w-6 h-6 bg-search mr-2"></div>

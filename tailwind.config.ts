@@ -8,13 +8,19 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        jksans: ["Plus Jakarta Sans", "sans-serif"],
+        nue: ["Bebas Neue", 'serif'],
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
         prim1: "var(--prim1)",
         prim2: "var(--prim2)",
         search: "var(--search)",
-        
+        lprim: "var(--lprim)",
+        psec: "var(--psec)",
+        lsec: "var(--lsec)",
       },
     },
   },
