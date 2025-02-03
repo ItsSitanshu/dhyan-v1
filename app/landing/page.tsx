@@ -2,7 +2,7 @@ import React from "react";
 
 const App = () => {
   return (
-    <div className="bg-black text-white font-sans">
+    <div className="bg-bgsec text-white font-sans">
       <header className="flex justify-between items-center p-6">
         <div className="flex items-center">
           <img alt="" className="h-10" src="/logo.svg" />

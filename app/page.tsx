@@ -4,14 +4,14 @@ import Image from "next/image";
 import ReactMarkdown from 'react-markdown';
 import React, { useState, useEffect, useRef } from "react";
 
-import logo from "@/app/assets/images/logo.svg";
-import brainLogo from "@/app/assets/images/icons/brain.svg";
-import notepadLogo from "@/app/assets/images/icons/notepad.svg";
-import questionLogo from "@/app/assets/images/icons/question.svg";
-import tipLogo from "@/app/assets/images/icons/tip.svg";
-import arrowLogo from "@/app/assets/images/icons/arrow.svg";
+import logo from "@/app/assets/logo.svg";
+import brainLogo from "@/app/assets/icons/brain.svg";
+import notepadLogo from "@/app/assets/icons/notepad.svg";
+import questionLogo from "@/app/assets/icons/question.svg";
+import tipLogo from "@/app/assets/icons/tip.svg";
+import arrowLogo from "@/app/assets/icons/arrow.svg";
 
-import { rawLLM } from "@/app/lib";
+import { rawLLM, getTokenCount, trimToMaxTokens } from "@/app/lib";
 
 import SloganRotator from "@/app/components/SloganRotator";
 
@@ -25,7 +25,8 @@ type ButtonData = {
 type Chat = {
   isUser: boolean;
   message: string;
-}
+  timestamp: number;
+};
 
 const buttonData: ButtonData = {
   explain_concept: {
@@ -46,28 +47,40 @@ const buttonData: ButtonData = {
   }
 };
 
+const MAX_TOKENS = 500_000; 
+
 const App = () => {
   const [message, setMessage] = useState<string>("");
   const [responses, setResponses] = useState<Chat[]>([]);
-
   const [chatView, setChatView] = useState<boolean>(false);
-
-  const chatContainerRef = useRef<HTMLDivElement | null>(null);  // ref for scrolling
+  const chatContainerRef = useRef<HTMLDivElement | null>(null); 
 
   const handleResponse = async () => {
     if (!message.trim()) return;
 
-    const newResponses = [...responses, { isUser: true, message }];
-
+    const timestamp = Date.now();
+    const newResponses = [...responses, { isUser: true, message, timestamp }];
     setResponses(newResponses);
-
     setMessage("");
     if (!chatView) setChatView(true);
 
     try {
-      const response = await rawLLM(message);
+      let conversationContext = newResponses.map((chat) => {
+        return `${chat.isUser ? 'User' : 'Assistant'}: ${chat.message}\n`;
+      }).join('\n');
+
+      console.log(conversationContext)
+
+      const tokenCount = getTokenCount(conversationContext);
+
+      if (tokenCount > MAX_TOKENS) {
+        conversationContext = trimToMaxTokens(conversationContext, MAX_TOKENS);
+      }
+
+      const response = await rawLLM(message, conversationContext);
+
       if (response.code === 200) {
-        setResponses([...newResponses, { isUser: false, message: response.response }]);
+        setResponses([...newResponses, { isUser: false, message: response.response, timestamp: Date.now() }]);
       }
     } catch (error) {
       console.error("Error fetching response:", error);
@@ -145,9 +158,17 @@ const App = () => {
           </div>
         </div>
       ) : (
-        <div className="flex-1 flex flex-col items-center justify-center relative">
-
-          <div className="flex flex-col overflow-y-auto w-1/2 p-4 h-full">
+        <div 
+          className="flex-1 flex flex-col items-center justify-center relative "
+        >
+          <div 
+            className="flex flex-col w-1/2 p-4 h-5/6 overflow-y-auto"
+            ref={chatContainerRef}  
+            style={{
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none', 
+            }}
+          >
             {responses.map((chat, index) => (
               <div
                 key={index}
@@ -156,16 +177,16 @@ const App = () => {
                 <div
                   className={`${
                     chat.isUser ? "bg-white/30 text-white" : "text-white"
-                  } px-2 py-1.5 rounded-md`}
+                  } px-2 py-1.5 rounded-md my-2`}
                 >
-                  <ReactMarkdown>{chat.message}</ReactMarkdown>
+                  {chat.message}
                 </div>
               </div>
             ))}
           </div>
           <div
               className="bg-bgsec rounded-xl w-3/4 h-auto max-h-96 max-w-4xl mb-6 relative"
-            >
+          >
               <textarea
                 className="bg-bgsec h-full w-full p-4 text-foreground focus:outline-none overflow-y-auto rounded-xl resize-none"
                 placeholder="Type your message..."
