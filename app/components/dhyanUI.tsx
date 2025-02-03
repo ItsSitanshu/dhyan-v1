@@ -10,38 +10,35 @@ import notepadLogo from "@/app/assets/images/icons/notepad.svg";
 import questionLogo from "@/app/assets/images/icons/question.svg";
 import tipLogo from "@/app/assets/images/icons/tip.svg";
 
-
-
-
 type ButtonData = {
   [key: string]: {
     label: string;
-    icon: string | any; 
+    icon: string | any;
   };
 };
 
 const buttonData: ButtonData = {
   explain_concept: {
     label: "Explain",
-    icon: brainLogo, 
+    icon: brainLogo,
   },
   summarize_notes: {
     label: "Summarize",
-    icon: notepadLogo, 
+    icon: notepadLogo,
   },
   ask_question: {
     label: "Ask a question",
-    icon: questionLogo, 
+    icon: questionLogo,
   },
   study_tip: {
     label: "Study tip",
     icon: tipLogo,
-  }
+  },
 };
-
 
 const SloganRotator = () => {
   const slogans = [
+    "I will teach you like balram sir teaches chemistry",
     "I will explain without the pop quizzes",
     "I will teach without the boring lectures",
     "I will make learning fun—no chalk dust required",
@@ -60,14 +57,12 @@ const SloganRotator = () => {
     "I will help you learn; no ‘bujhena vane yo kitaab nalyauna!’",
     "I will guide you; without ‘yo ta testo easy ho!’ frustration",
     "I will make learning fun; no ‘yo exam ma aaudaina, hataideu’ moments",
-    "I will teach you like balram sir teaches chemistry",
   ];
-  
-  
+
   const [typedSlogan, setTypedSlogan] = useState<string>("");
   const [sloganIndex, setSloganIndex] = useState<number>(0);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
-  const typingSpeed = 100; 
+  const typingSpeed = 100;
   const deletingSpeed = 50;
   const changingSpeed = 1500;
 
@@ -100,9 +95,7 @@ const SloganRotator = () => {
     return () => clearInterval(interval);
   }, [typedSlogan, isDeleting, sloganIndex, slogans]);
 
-  return (
-    <h1 className="text-2xl font-bold mb-6">I'm Dhyan, {typedSlogan}</h1>
-  );
+  return <h1 className="text-2xl font-bold mb-6">I'm Dhyan, {typedSlogan}</h1>;
 };
 
 const DhyanUI = () => {
@@ -149,33 +142,34 @@ const DhyanUI = () => {
       </div>
       <div className="flex-1 flex flex-col items-center justify-center relative">
         <SloganRotator />
-        
-        <textarea 
+
+        <textarea
           className="bg-bgsec p-4 rounded-xl w-3/4 h-auto max-h-96 max-w-4xl overflow-y-auto mb-6 text-foreground focus:outline-none"
           placeholder=""
           value={message}
           onChange={(e: any) => setMessage(e.target.value)}
         />
 
-          <div className="flex space-x-4">
-            {Object.keys(buttonData).map((key) => (
-              <button key={key} className="bg-bgsec
-               border-[0.2px] border-white/20 hover:bg-white/20 py-2 px-4 rounded-full font-normal flex items-center">
-                {buttonData[key].icon && (
-                  <Image
-                    src={buttonData[key].icon}
-                    alt={buttonData[key].label}
-                    width={256}
-                    height={256}
-                    className="w-5 h-5 mr-2"
-                  />
-                )}
-                <h1 className="font-semibold">{buttonData[key].label}</h1>
-              </button>
-            ))}
-          </div>
-
-
+        <div className="flex space-x-4">
+          {Object.keys(buttonData).map((key) => (
+            <button
+              key={key}
+              className="bg-bgsec
+               border-[0.2px] border-white/20 hover:bg-white/20 py-2 px-4 rounded-full font-normal flex items-center"
+            >
+              {buttonData[key].icon && (
+                <Image
+                  src={buttonData[key].icon}
+                  alt={buttonData[key].label}
+                  width={256}
+                  height={256}
+                  className="w-5 h-5 mr-2"
+                />
+              )}
+              <h1 className="font-semibold">{buttonData[key].label}</h1>
+            </button>
+          ))}
+        </div>
 
         <div className="absolute top-4 right-4">
           <div className="bg-prim2 rounded-full h-10 w-10 flex items-center justify-center text-foreground font-semibold">
