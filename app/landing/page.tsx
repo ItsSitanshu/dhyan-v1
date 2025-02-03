@@ -2,9 +2,8 @@ import React from "react";
 
 const App = () => {
   return (
-    <div className="bg-black text-white font-sans min-h-screen flex flex-col items-center">
-      {/* Header */}
-      <header className="w-full max-w-5xl flex justify-between items-center p-6">
+    <div className="bg-bgsec text-white font-sans">
+      <header className="flex justify-between items-center p-6">
         <div className="flex items-center">
           <img alt="logo" className="h-10" src="/logo.svg" />
           <span className="ml-2 text-xl font-semibold">DhyanAI</span>
