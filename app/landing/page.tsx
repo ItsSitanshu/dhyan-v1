@@ -1,15 +1,55 @@
 import React from "react";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const App = () => {
+  
+  const items = [
+    "Write a message that goes with a kitten gif for a friend on a rough day ↗",
+    "Test my knowledge on ancient civilizations ↗",
+    "Write a text asking a friend to be my plus-one at a wedding ↗",
+    "Improve my essay writing ask me to outline my thoughts ↗",
+    "Tell me a fun fact about the Roman Empire ↗",
+    "Create a personal webpage for me after asking me three questions ↗",
+    "Create a morning routine to boost my productivity ↗",
+    "Plan a 'mental health day' to help me relax ↗",
+  ];
+
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    pauseOnHover: false,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+        },
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 1,
+        },
+      },
+    ],
+  };
+
   return (
-    <div className="bg-bgsec text-white font-sans">
+    <div className="bg-background text-foreground font-jksans min-h-screen">
       <header className="flex justify-between items-center p-6">
         <div className="flex items-center">
-          <img alt="logo" className="h-10" src="/logo.svg" />
+          <img alt="DhyanAI Logo" className="h-10" src="/logo.svg" />
           <span className="ml-2 text-xl font-semibold">DhyanAI</span>
         </div>
         <nav className="hidden md:flex space-x-6">
-          {["lorem", "lorem", "lorem", "lorem"].map((item, index) => (
+          {["Home", "Features", "Pricing", "Contact"].map((item, index) => (
             <a key={index} className="hover:underline" href="#">
               {item}
             </a>
@@ -17,120 +57,36 @@ const App = () => {
         </nav>
       </header>
 
-      {/* Main Content */}
-      <main className="flex flex-col items-center text-center px-4">
-        <p className="text-gray-400 mt-12">Lorem, ipsum dolor.</p>
-        <h1 className="text-4xl md:text-6xl font-bold mt-4">Lorem, ipsum.</h1>
+      <div className="flex flex-col items-center text-center px-4">
+        <p className="text-psec mt-12">Empowering AI-driven solutions</p>
+        <h1 className="text-4xl md:text-6xl font-bold mt-4 font-nue">
+          Revolutionizing AI Assisted Learning
+        </h1>
 
         {/* Buttons */}
         <div className="flex flex-col md:flex-row items-center mt-8 space-y-4 md:space-y-0 md:space-x-4">
-          <button className="bg-white text-black px-6 py-2 rounded-full font-semibold">
-            Lorem, ipsum.
+          <button className="bg-prim1 text-foreground px-6 py-2 rounded-full font-semibold">
+            Get Started
           </button>
-          <a className="text-gray-400 hover:underline" href="#">
-            Lorem, ipsum dolor.
-          </a>
-          <a className="text-gray-400 hover:underline" href="#">
-            Lorem, ipsum dolor.
-          </a>
+          <button className="bg-prim1 text-foreground px-6 py-2 rounded-full font-semibold">
+            Get Started
+          </button>
         </div>
 
-        {/* Text Section */}
-        <div className="max-w-2xl mt-12 text-gray-400 space-y-4">
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam
-            odit mollitia eum vel ducimus ea tempora doloremque fuga repellendus
-            accusamus maxime.
-          </p>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem
-            laborum, dolores eum aut perspiciatis quaerat sunt!
-          </p>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            <a className="underline" href="#">
-              {" "}
-              dhyanai.com
-            </a>
-            .
-          </p>
-        </div>
-
-        {/* Section Title */}
-        <h2 className="text-2xl md:text-3xl font-bold mt-16">lorem</h2>
-
-        {/* Buttons */}
-        <div className="flex flex-wrap justify-center mt-8 gap-4">
-          {[
-            "Lorem, ipsum.",
-            "Lorem, ipsum.",
-            "Lorem, ipsum dolor.",
-            "Lorem, ipsum.",
-          ].map((text, index) => (
-            <button
-              key={index}
-              className="bg-gray-800 text-white px-4 py-2 rounded-full"
-            >
-              {text}
-            </button>
-          ))}
-        </div>
-      </main>
-
-      {/* Code Block Section */}
-      <div className="bg-black text-white font-sans p-6 mt-12 w-full max-w-4xl">
-        {/* User Message */}
-        <div className="mb-4">
-          <p className="text-lg font-semibold">User</p>
-          <p className="text-gray-400">
-            This code is not working like I expect — how do I fix it?
-          </p>
-        </div>
-
-        {/* Code Block */}
-        <div className="bg-gray-800 p-4 rounded-lg">
-          <pre className="text-gray-300 overflow-x-auto">
-            <code>
-              {`#include <stdio.h>
-
-int main() {
-    int numbers[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-
-    for (int i = 0; i < 10; i++) {
-        printf("Element %d: %d\\n", i, numbers[i]);
-    }
-
-    return 0;
-}`}
-            </code>
-          </pre>
-        </div>
-
-        {/* Chat Responses */}
-        <div className="mt-6 space-y-4">
-          <div>
-            <p className="text-lg font-semibold">DhyanAI</p>
-            <p className="text-gray-400">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Assumenda
-              sit ipsum facilis impedit fuga corrupti debitis modi.
-            </p>
-          </div>
-          <div>
-            <p className="text-lg font-semibold">User</p>
-            <p className="text-gray-400">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam,
-              alias?
-            </p>
-          </div>
-          <div>
-            <p className="text-lg font-semibold">DhyanAI</p>
-            <p className="text-gray-400">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              <code className="bg-gray-700 p-1 rounded mx-1">lorem</code>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              <code className="bg-gray-700 p-1 rounded mx-1">lorem2</code>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            </p>
+        <div className="bg-black text-white w-full py-10">
+          <div className="container mx-auto px-4">
+            <Slider {...settings}>
+              {items.map((item, index) => (
+                <div key={index} className="p-4">
+                  <div 
+                    className="bg-gray-800 p-4 rounded-lg cursor-pointer text-center"
+                    // href={() => (`/q?=${encodeURIComponent(item)}`)}
+                  >
+                    <p className="text-white">{item}</p>
+                  </div>
+                </div>
+              ))}
+            </Slider>
           </div>
         </div>
       </div>
