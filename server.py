@@ -4,22 +4,40 @@ import google.generativeai as genai
 from flask_cors import CORS
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
-from codes import * 
+from utils import * 
 
 load_dotenv()
 
-API_KEY = os.getenv("API_KEY")
-genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel('gemini-1.5-flash-8b')
 
 app = Flask(__name__)
 CORS(app)
 
+API_KEYS = [
+  os.getenv("API_KEY1"),
+  os.getenv("API_KEY2"),
+  os.getenv("API_KEY3"),
+  os.getenv("API_KEY4"),
+  os.getenv("API_KEY5"),
+]
+
+api_index = 0  
+
+app = Flask(__name__)
+CORS(app)
+
+def get_next_api_key():
+  global api_index
+  api_key = API_KEYS[api_index]
+  api_index = (api_index + 1) % len(API_KEYS)
+  return api_key
+
 pre_prompt = """
 You are a highly skilled tutor who excels at providing clear, comprehensive explanations tailored to the student’s 
 needs. Your responses should integrate the following quantitative and qualitative feedback, provided by an RL 
 model designed to optimize learning outcomes based on the student's academic performance, engagement, and recent
-feedback. The student’s data is as follows:
+feedback. Keep the messages concice when required. Make sure to not overexplain. Overexplaining is discouraged unless specified
+The student’s data is as follows:
 
 Name: Sitanshu Shrestha
 
@@ -77,10 +95,18 @@ Based on the RL model's analysis, please respond to the student's query as follo
 - Encourage the student to re-engage if an abrupt exit is noted, providing more detailed breakdowns and offering additional examples for clarity.
 - Adapt the tone and level of detail according to the student’s current performance and the feedback received from previous sessions.
 
+
 For general context, here's the interaction you and the student have had
 [Student Interactions]
 
 [Student Interactions End]
+
+Furthermore, a gist of the student's material has been extracted. If the student's query requires anything from the following,
+give priority to the following but if the following seems irrelevant, give priority to the student's query
+
+[Relevant Knowledge]
+
+[Relevant Knowledge End]
 
 The student’s query is as follows:
 [Student’s Query]
@@ -88,38 +114,42 @@ The student’s query is as follows:
 
 @app.route("/api/rllm", methods=["POST"])
 def ask():
-  user_input = request.json.get("query")
-  history = request.json.get("history")
+    global model
+    user_input = request.json.get("query")
+    history = request.json.get("history", "")
 
-  start = time.time()
+    start = time.time()
 
-  if not user_input:
-    end = time.time()
+    if not user_input:
+        return jsonify({
+            "code": HTTP_BAD_REQUEST,
+            "response": "No query provided",
+            "time": time.time() - start,
+        })
+
+    api_key = get_next_api_key()
+    genai.configure(api_key=api_key)
+    model = genai.GenerativeModel('gemini-1.5-flash-8b')
+
+    relevant_docs = retrieve_relevant_docs(user_input, top_k=3)
+
+    print(relevant_docs[0][0])
+
+    retrieved_knowledge = "\n".join(relevant_docs[0])
+
+    full_prompt = f"{pre_prompt.replace('[Student Interactions]', history)}\n"
+    full_prompt = f"{pre_prompt.replace('[Relevant Knowledge]', retrieved_knowledge)}\n"
+    full_prompt += f"Student’s Query:\n{user_input}\n\n"
+
+    print(full_prompt)
+
+    raw_response = model.generate_content(full_prompt)
+
     return jsonify({
-      "code": HTTP_BAD_REQUEST,
-      "response": "No query provided",
-      "time": end - start,
+        "code": HTTP_OK,
+        "response": raw_response.text,
+        "time": time.time() - start,
     })
-
-  print(history)
-  
-  full_prompt = pre_prompt.replace("[Student Interactions]", history)
-
-  full_prompt = full_prompt.replace("[Student’s Query]", user_input)
-
-  print(full_prompt)
-
-  raw_response = model.generate_content(full_prompt)
-
-  end = time.time()
-
-  response = raw_response.text
-
-  return jsonify({
-    "code": HTTP_OK,
-    "response": response,
-    "time": end - start,
-  })
 
 if __name__ == "__main__":
   app.run(debug=True)
