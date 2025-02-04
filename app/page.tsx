@@ -125,7 +125,7 @@ const App = () => {
   }, []);
 
   return (
-    !user ?
+    user ?
     <div className="h-screen flex">
       <div className="w-64 bg-bgsec text-lsec p-4 flex flex-col justify-between">
         <div>
