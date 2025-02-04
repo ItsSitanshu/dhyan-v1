@@ -14,7 +14,7 @@ const LandingPage = () => {
   ];
 
   return (
-    <div className="bg-black text-white font-sans min-h-screen flex flex-col items-center">
+    <div className="bg-background text-foreground font-sans min-h-screen flex flex-col items-center overflow-hidden">
       {/* Header */}
       <header className="w-full max-w-5xl flex justify-between items-center p-6">
         <div className="flex items-center">
@@ -41,7 +41,7 @@ const LandingPage = () => {
 
         {/* Buttons */}
         <div className="flex flex-col md:flex-row items-center mt-8 space-y-4 md:space-y-0 md:space-x-4">
-          <button className="bg-white text-black px-6 py-2 rounded-full font-semibold">
+          <button className="bg-foreground text-background px-6 py-2 rounded-full font-semibold">
             Get Started
           </button>
           <a className="text-gray-400 hover:underline" href="#">
@@ -79,7 +79,7 @@ const LandingPage = () => {
             (text, index) => (
               <button
                 key={index}
-                className="bg-gray-800 text-white px-4 py-2 rounded-full"
+                className="bg-gray-800 text-foreground px-4 py-2 rounded-full"
               >
                 {text}
               </button>
@@ -89,21 +89,20 @@ const LandingPage = () => {
       </main>
 
       {/* Code Example Section */}
-      <div className="flex flex-col items-center justify-center bg-black text-white font-sans p-6 mt-12 w-full">
-        <div className="flex flex-col md:flex-row justify-center items-center bg-black text-white font-sans p-6 mt-12 max-w-4xl w-full">
-          <div className="mb-4 md:mr-6">
-            <p className="text-lg font-semibold text-center md:text-left">
-              User
-            </p>
-            <p className="text-gray-400 text-center md:text-left">
-              This code is not working like I expect — how do I fix it?
-            </p>
-          </div>
+      <div className="w-full max-w-4xl mx-auto mt-12 space-y-6">
+        {/* User Question */}
+        <div>
+          <p className="text-lg font-semibold">User</p>
+          <p className="text-gray-400">
+            This code is not working like I expect — how do I fix it?
+          </p>
+        </div>
 
-          <div className="bg-gray-800 p-4 rounded-lg max-w-xl w-full">
-            <pre className="text-gray-300 overflow-auto">
-              <code>
-                {`#include <stdio.h>
+        {/* Code Block */}
+        <div className="w-full bg-gray-900 p-6 rounded-lg text-foreground text-sm overflow-x-auto">
+          <pre>
+            <code>
+              {`#include <stdio.h>
 
 int main() {
     int numbers[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
@@ -114,47 +113,49 @@ int main() {
 
     return 0;
 }`}
-              </code>
-            </pre>
+            </code>
+          </pre>
+        </div>
+
+        {/* Chat Responses */}
+        <div className="space-y-4">
+          <div>
+            <p className="text-lg font-semibold">DhyanAI</p>
+            <p className="text-gray-400">
+              It looks like your code is correctly printing the array elements.
+              Is there a specific issue you're facing?
+            </p>
+          </div>
+          <div>
+            <p className="text-lg font-semibold">User</p>
+            <p className="text-gray-400">
+              I expected a different output format. Can I format the numbers
+              differently?
+            </p>
+          </div>
+          <div>
+            <p className="text-lg font-semibold">DhyanAI</p>
+            <p className="text-gray-400">
+              Yes! You can modify the{" "}
+              <code className="bg-gray-800 px-2 py-1 rounded">printf</code>{" "}
+              statement to change the format. For example, use{" "}
+              <code className="bg-gray-800 px-2 py-1 rounded">
+                "%d - %d\\n"
+              </code>{" "}
+              instead.
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Chat Responses */}
-      <div className="mt-6 space-y-4">
-        <div>
-          <p className="text-lg font-semibold">DhyanAI</p>
-          <p className="text-gray-400">
-            It looks like your code is correctly printing the array elements. Is
-            there a specific issue you're facing?
-          </p>
-        </div>
-        <div>
-          <p className="text-lg font-semibold">User</p>
-          <p className="text-gray-400">
-            I expected a different output format. Can I format the numbers
-            differently?
-          </p>
-        </div>
-        <div>
-          <p className="text-lg font-semibold">DhyanAI</p>
-          <p className="text-gray-400">
-            Yes! You can modify the{" "}
-            <code className="bg-gray-700 p-1 rounded mx-1">printf</code>{" "}
-            statement to change the format. For example, use{" "}
-            <code className="bg-gray-700 p-1 rounded mx-1">"%d - %d\\n"</code>{" "}
-            instead.
-          </p>
-        </div>
-      </div>
-
+      {/* Boxes Section */}
       <div className="w-screen grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-12 px-4">
         {boxItems.map((item, index) => (
           <div
             key={index}
-            className="bg-gray-800 p-6 rounded-lg text-center h-32 flex items-center justify-center"
+            className="bg-gray-800 p-4 rounded-lg text-center h-24 flex items-center justify-center"
           >
-            <a href="#" className="block text-white">
+            <a href="#" className="block text-foreground">
               {item}
             </a>
           </div>

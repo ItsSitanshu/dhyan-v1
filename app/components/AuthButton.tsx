@@ -16,13 +16,13 @@ const AuthButton : FC = () => {
     return (
         <>
         <div className="flex flex-row justify-evenly w-10/12 h-16 mt-5 mb-7">
-            <div className="hover:cursor-pointer hover:bg-white hover:text-black hover:scale-[1.05] transition duration-300 ease-in-out  
-            flex flex-row justify-center items-center w-2/5 h-full border-[0.5px] border-white/20 bg-transparent rounded-lg">
+            <div className="hover:cursor-pointer hover:bg-foreground hover:text-background hover:scale-[1.05] transition duration-300 ease-in-out  
+            flex flex-row justify-center items-center w-2/5 h-full border-[0.5px] border-foreground/20 bg-transparent rounded-lg">
                 <Image aria-hidden src={googleIcon} alt="File icon" width={26} height={26} className="mr-1.5"/>
                 <h1 className=" text-[1rem]">Google</h1>
             </div>
-            <div className="hover:cursor-pointer hover:bg-white hover:text-black hover:scale-105 transition duration-300 ease-in-out
-             flex flex-row justify-center items-center w-2/5 h-full border-[0.5px] border-white/20 bg-transparent rounded-lg">
+            <div className="hover:cursor-pointer hover:bg-foreground hover:text-background hover:scale-105 transition duration-300 ease-in-out
+             flex flex-row justify-center items-center w-2/5 h-full border-[0.5px] border-foreground/20 bg-transparent rounded-lg">
                 <Image aria-hidden src={githubIcon} alt="File icon" width={28} height={28} className="mr-1.5"/>
                 <h1 className=" text-[1rem]">Github</h1>
             </div>

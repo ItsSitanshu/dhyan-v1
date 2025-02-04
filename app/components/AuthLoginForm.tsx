@@ -46,7 +46,7 @@ const AuthLoginForm: FC = () => {
             <input
               type="email"
               placeholder="e.g. haribahadur@gmail.com"
-              className="bg-bgsec h-16 text-[1rem] rounded-lg pl-3 m-0 w-full focus:outline-none focus:border focus:border-white/40 text-white"
+              className="bg-bgsec h-16 text-[1rem] rounded-lg pl-3 m-0 w-full focus:outline-none focus:border focus:border-foreground/40 text-foreground"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -59,11 +59,11 @@ const AuthLoginForm: FC = () => {
             <input
               type="password"
               placeholder="e.g. sec!!rE@321"
-              className="bg-bgsec h-16 text-[1rem] rounded-lg pl-3 m-0 w-full focus:outline-none focus:border focus:border-white/40"
+              className="bg-bgsec h-16 text-[1rem] rounded-lg pl-3 m-0 w-full focus:outline-none focus:border focus:border-foreground/40"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <span className=" text-xs text-white/35 ml-1 mt-2">
+            <span className=" text-xs text-foreground/35 ml-1 mt-2">
               Must be at least 8 characters long, with a number and a special character.
             </span>
           </div>
@@ -79,15 +79,15 @@ const AuthLoginForm: FC = () => {
 
         <button
           type="submit"
-          className="hover:cursor-pointer hover:bg-white transition duration-300 ease-in-out flex flex-col items-center justify-center w-full h-12 rounded-xl mt-2 bg-white/90 last: text-lg text-black font-bold"
+          className="hover:cursor-pointer hover:bg-foreground transition duration-300 ease-in-out flex flex-col items-center justify-center w-full h-12 rounded-xl mt-2 bg-foreground/90 last: text-lg text-background font-bold"
         >
           LOGIN
         </button>
       </form>
 
-      <p className="text-white/[.5]  text-xs text-thin mt-4">
+      <p className="text-foreground/[.5]  text-xs text-thin mt-4">
         Don't have an account?{" "}
-        <Link href='/auth/register'><span className="font-bold text-[0.9rem] underline text-white" >Register</span></Link>
+        <Link href='/auth/register'><span className="font-bold text-[0.9rem] underline text-foreground" >Register</span></Link>
       </p>
     </div>
   );
