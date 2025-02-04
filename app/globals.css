@@ -9,10 +9,10 @@
   --foreground: #212121;
   --prim1: #2F5540;
   --prim2: #4a7856;
-  --lprim: #5d636b;
+  --lprim: #3b3b3b;
   --psec: #d8c4b6;
   --lsec: #f5efe7;
-  --bgsec: #2f2f2f;
+  --bgsec: #181818;
 }
 
 * {
@@ -21,7 +21,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #000000;
+    --background: #0e0e0e;
     --foreground: #f0e5d6;
   }
 }

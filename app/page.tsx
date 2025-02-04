@@ -4,7 +4,8 @@ import Image from "next/image";
 import ReactMarkdown from 'react-markdown';
 import React, { useState, useEffect, useRef } from "react";
 
-import logo from "@/app/assets/logo.svg";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+
 import brainLogo from "@/app/assets/icons/brain.svg";
 import notepadLogo from "@/app/assets/icons/notepad.svg";
 import questionLogo from "@/app/assets/icons/question.svg";
@@ -14,6 +15,7 @@ import arrowLogo from "@/app/assets/icons/arrow.svg";
 import { rawLLM, getTokenCount, trimToMaxTokens } from "@/app/lib";
 
 import SloganRotator from "@/app/components/SloganRotator";
+import NotSignedPopup from "@/app/components/NotSignedPopup";
 
 type ButtonData = {
   [key: string]: {
@@ -48,6 +50,8 @@ const buttonData: ButtonData = {
 };
 
 const MAX_TOKENS = 500_000; 
+
+const supabase = createClientComponentClient();
 
 const App = () => {
   const [message, setMessage] = useState<string>("");
@@ -93,7 +97,35 @@ const App = () => {
     }
   }, [responses]);
 
+  const [user, setUser] = useState<any>();
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        setUser(session?.user ?? null);
+      } catch (error: any) {
+        console.error("Error fetching session:", error.message);
+      }
+    };
+
+    fetchSession();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+      }
+    );
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
   return (
+    !user ?
     <div className="h-screen flex">
       <div className="w-64 bg-bgsec text-lsec p-4 flex flex-col justify-between">
         <div>
@@ -209,6 +241,7 @@ const App = () => {
         </div>
       )}
     </div>
+    : <NotSignedPopup/>
   );
 };
 

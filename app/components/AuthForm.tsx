@@ -116,7 +116,9 @@ const AuthForm: FC = () => {
 
         <button
           type="submit"
-          className="hover:cursor-pointer hover:bg-foreground transition duration-300 ease-in-out flex flex-col items-center justify-center w-full h-12 rounded-xl mt-3 bg-foreground/90 last: text-lg text-background font-bold"
+          className="hover:cursor-pointer hover:bg-foreground transition duration-300 ease-in-out flex flex-col
+          items-center justify-center w-full h-12 rounded-xl mt-3 hover:opacity-100 opacity-70 last: text-lg 
+          text-background bg-foreground font-bold"
         >
           SIGN UP
         </button>
