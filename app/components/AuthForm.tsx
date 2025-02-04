@@ -60,7 +60,7 @@ const AuthForm: FC = () => {
             <input
               type="text"
               placeholder="e.g. Hari"
-              className="bg-bgsec h-full  text-sm rounded-lg pl-2 m-0 w-full focus:outline-none focus:border focus:border-white/40"
+              className="bg-bgsec h-full  text-sm rounded-lg pl-2 m-0 w-full focus:outline-none focus:border focus:border-foreground/40"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
             />
@@ -70,7 +70,7 @@ const AuthForm: FC = () => {
             <input
               type="text"
               placeholder="e.g. B. Aacharya"
-              className="bg-bgsec h-full  text-sm rounded-lg pl-2 m-0 w-full focus:outline-none focus:border focus:border-white/40"
+              className="bg-bgsec h-full  text-sm rounded-lg pl-2 m-0 w-full focus:outline-none focus:border focus:border-foreground/40"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
             />
@@ -83,7 +83,7 @@ const AuthForm: FC = () => {
             <input
               type="email"
               placeholder="e.g. haribahadur@gmail.com"
-              className="bg-bgsec h-full text-sm rounded-lg pl-2 m-0 w-full focus:outline-none focus:border focus:border-white/40"
+              className="bg-bgsec h-full text-sm rounded-lg pl-2 m-0 w-full focus:outline-none focus:border focus:border-foreground/40"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -96,11 +96,11 @@ const AuthForm: FC = () => {
             <input
               type="password"
               placeholder="e.g. sec!!rE@321"
-              className="bg-bgsec h-full text-sm rounded-lg pl-2 m-0 w-full focus:outline-none focus:border focus:border-white/40"
+              className="bg-bgsec h-full text-sm rounded-lg pl-2 m-0 w-full focus:outline-none focus:border focus:border-foreground/40"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <span className=" text-[0.7rem] text-white/35 ml-1 mt-2">
+            <span className=" text-[0.7rem] text-foreground/35 ml-1 mt-2">
               Must be at least 8 characters long, with a number and a special character.
             </span>
           </div>
@@ -116,16 +116,16 @@ const AuthForm: FC = () => {
 
         <button
           type="submit"
-          className="hover:cursor-pointer hover:bg-white transition duration-300 ease-in-out flex flex-col items-center justify-center w-full h-12 rounded-xl mt-3 bg-white/90 last: text-lg text-black font-bold"
+          className="hover:cursor-pointer hover:bg-foreground transition duration-300 ease-in-out flex flex-col items-center justify-center w-full h-12 rounded-xl mt-3 bg-foreground/90 last: text-lg text-background font-bold"
         >
           SIGN UP
         </button>
       </form>
 
-      <p className="text-white/[.5]  text-xs text-thin mt-4">
+      <p className="text-foreground/[.5]  text-xs text-thin mt-4">
         Already have an account?{" "}
         <Link href='/auth/login'>
-          <span className="font-bold underline text-[0.9rem] text-white">Login</span>
+          <span className="font-bold underline text-[0.9rem] text-foreground">Login</span>
         </Link>
       </p>
     </div>
