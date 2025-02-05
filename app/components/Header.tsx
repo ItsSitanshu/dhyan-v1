@@ -9,7 +9,11 @@ const Header = () => {
       </div>
       <nav className="hidden md:flex space-x-6">
         {["Home", "Features", "About", "Contact"].map((item, index) => (
-          <a key={index} className="hover:underline" href="#">
+          <a
+            key={index}
+            href="#"
+            className="relative text-foreground after:block after:content-[''] after:absolute after:h-[2px] after:bg-foreground after:w-0 after:left-0 after:bottom-[-2px] after:transition-all after:duration-300 hover:after:w-full"
+          >
             {item}
           </a>
         ))}
