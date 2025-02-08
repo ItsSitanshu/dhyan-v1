@@ -1,131 +1,115 @@
-import React from "react";
+import React, { useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
-const InitialForm: React.FC = () => {
+import VisualIcon from "@/app/assets/icons/types/1.svg";
+import AuditoryIcon from "@/app/assets/icons/types/2.svg";
+import KinestheticIcon from "@/app/assets/icons/types/3.svg";
+import LoadingScreen from "./LoadingScreen";
+
+const supabase = createClientComponentClient();
+
+const gradeOptions = [
+  { label: "Grade 8", title: "८", color: "#FFB74D" },
+  { label: "Grade 9", title: "९", color: "#64B5F6" },  
+  { label: "Grade 10", title: "१०", color: "#81C784" }, 
+  { label: "Grade 11", title: "११", color: "#FF8A80" }, 
+  { label: "Grade 12", title: "१२", color: "#BA68C8" }  
+];
+
+const learningStyles = [
+  { label: "Visual", image: VisualIcon, description: "Learns best through images, diagrams, and videos." },
+  { label: "Auditory", image: AuditoryIcon, description: "Prefers listening to lectures and discussions." },
+  { label: "Kinesthetic", image: KinestheticIcon, description: "Hands-on learning with activities and practice." }
+];
+
+interface InitialFormInterface {
+  user: any;
+}
+
+const InitialForm: React.FC<InitialFormInterface> = ({ user }) => {
+  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState({
+    grade: "",
+    learningStyle: "",
+  });
+
+  const router = useRouter();
+
+  const handleSelect = async (key: any, value: any) => {
+    const updatedFormData = { ...formData, [key]: value };
+    setFormData(updatedFormData);
+
+    setStep(step + 1);
+
+    if (key === "learningStyle") {      
+      const { data, error } = await supabase.from("users").insert([
+        {
+          id: user.id,
+          chats: [],
+          info: updatedFormData,
+        },
+      ]);
+      if (!error) router.push("/");
+    }
+  };
+
+  if (step === 3) {
+    return <LoadingScreen status="Telling all the teachers about a new student" />;
+  }
+
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
-      <main className="flex flex-col md:flex-row items-center justify-between p-8 flex-grow">
-        <div className="w-full md:w-2/3">
-          <h2 className="text-2xl font-semibold text-gray-900">
-            Personal Information & EcoSystem Setup
-          </h2>
-          <p className="text-gray-600 mt-2">
-            Let's make your learning journey seamless. Help us know more about
-            you.
-          </p>
-          <div className="flex items-center mt-4">
-            <div className="h-1 w-1/4 bg-blue-500"></div>
-            <div className="h-1 w-1/4 bg-gray-300"></div>
-            <div className="h-1 w-1/4 bg-gray-300"></div>
-            <div className="h-1 w-1/4 bg-gray-300"></div>
-          </div>
-          <form className="mt-8 space-y-6">
-            <div className="flex flex-col md:flex-row md:space-x-6">
-              <div className="flex-1">
-                <label
-                  className="block text-sm font-semibold text-gray-700"
-                  htmlFor="name"
+    <div className="min-h-screen flex items-center justify-center bg-background text-foreground p-6">
+      <div className="w-2/3 p-6 bg-bgsec shadow-lg rounded-2xl">
+        {step === 1 && (
+          <div>
+            <h2 className="text-4xl font-semibold text-center">
+              Hello, {user?.user_metadata?.username || "Student"}! Select Your Grade
+            </h2>
+            <div className="flex flex-row space-x-5 mt-4">
+              {gradeOptions.map(({ label, title, color }) => (
+                <div
+                  key={label}
+                  className="flex flex-col text-foreground items-center w-1/3 cursor-pointer p-4 bg-background justify-center
+                  rounded-xl text-center transition-all duration-300 transform hover:scale-105 hover:bg-foreground 
+                  hover:text-background"
+                  onClick={() => handleSelect("grade", label)}
                 >
-                  * Your Name
-                </label>
-                <input
-                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                  id="name"
-                  type="text"
-                  defaultValue="Sitanshu"
-                />
-              </div>
-              <div className="flex-1">
-                <label
-                  className="block text-sm font-semibold text-gray-700"
-                  htmlFor="mobile"
-                >
-                  * Your Mobile Number
-                </label>
-                <input
-                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                  id="mobile"
-                  type="text"
-                  defaultValue="98"
-                />
-              </div>
-            </div>
-            <div className="flex flex-col md:flex-row md:space-x-6">
-              <div className="flex-1">
-                <label
-                  className="block text-sm font-semibold text-gray-700"
-                  htmlFor="language"
-                >
-                  * Choose your Language
-                </label>
-                <select
-                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                  id="language"
-                >
-                  <option>English</option>
-                </select>
-              </div>
-              <div className="flex-1">
-                <label
-                  className="block text-sm font-semibold text-gray-700"
-                  htmlFor="class"
-                >
-                  Select Your Class
-                </label>
-                <select
-                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                  id="class"
-                >
-                  <option>Grade 9</option>
-                </select>
-              </div>
-            </div>
-            <div className="mt-6">
-              <p className="text-gray-700">
-                Choose the Subjects from your class
-              </p>
-              <div className="flex items-center mt-2">
-                <input className="mr-2" id="select-all" type="checkbox" />
-                <label className="text-blue-500" htmlFor="select-all">
-                  Select all
-                </label>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-                {[
-                  "Science",
-                  "Compulsory Math",
-                  "Optional Math",
-                  "Compulsory English",
-                  "English Grammar",
-                  "Accounts",
-                  "Computer Science",
-                ].map((subject) => (
                   <div
-                    key={subject}
-                    className="border-2 border-gray-400 p-3 rounded-md text-center text-gray-700"
+                    className="p-3 aspect-square rounded-full text-white text-3xl font-bold flex items-center justify-center"
+                    style={{ backgroundColor: color }}
                   >
-                    {subject}
+                    {title}
                   </div>
-                ))}
-              </div>
+                  <p className="mt-4 font-medium text-lg">{label}</p>
+                </div>
+              ))}
             </div>
-            <div className="flex space-x-6 mt-8">
-              <button className="bg-blue-500 text-white px-6 py-3 rounded-md focus:outline-none hover:bg-blue-600">
-                Pay Now
-              </button>
-              <button className="bg-gray-500 text-white px-6 py-3 rounded-md focus:outline-none hover:bg-gray-600">
-                Start Free Trial
-              </button>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div>
+            <h2 className="text-4xl font-semibold text-center">What is your Learning Style?</h2>
+            <div className="flex flex-row w-full space-x-4 mt-6">
+              {learningStyles.map(({ label, image, description }) => (
+                <div
+                  key={label}
+                  className="flex flex-col text-foreground items-center w-1/3 cursor-pointer p-4 bg-background justify-center
+                  rounded-xl text-center transition-all duration-300 transform hover:scale-105 hover:bg-foreground 
+                  hover:text-background"
+                  onClick={() => handleSelect("learningStyle", label)}
+                >
+                  <Image width={512} height={512} src={image} alt={label} className="w-full h-40 rounded-lg" />
+                  <p className="mt-2 text-2xl font-medium">{label}</p>
+                  <p className="text-sm mt-1">{description}</p>
+                </div>
+              ))}
             </div>
-          </form>
-        </div>
-        <div className="w-full md:w-1/3 mt-8 md:mt-0">
-          <img
-            alt="Educational illustration"
-            className="w-full rounded-lg shadow-lg"
-            src=""
-          />
-        </div>
-      </main>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
