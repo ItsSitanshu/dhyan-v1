@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown from "react-markdown";
 import React, { useState, useEffect, useRef } from "react";
 
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
@@ -18,6 +18,7 @@ import SloganRotator from "@/app/components/SloganRotator";
 import NotSignedPopup from "@/app/components/NotSignedPopup";
 import InitialForm from "@/app/components/InitialForm";
 import LoadingScreen from "./components/LoadingScreen";
+import Orbitals from "@/app/simulations/Orbitals";  // Import Orbitals component
 
 type ButtonData = {
   [key: string]: {
@@ -52,7 +53,7 @@ const buttonData: ButtonData = {
   }
 };
 
-const MAX_TOKENS = 500_000; 
+const MAX_TOKENS = 500_000;
 
 const supabase = createClientComponentClient();
 
@@ -64,8 +65,8 @@ const App = () => {
   const [pendingSAct, setPendingSAct] = useState<number>(0);
   const [sActData, setSActData] = useState<any>(false);
 
-
-  const chatContainerRef = useRef<HTMLDivElement | null>(null); 
+  const [showSimulation, setShowSimulation] = useState(false); // New state for simulation view
+  const chatContainerRef = useRef<HTMLDivElement | null>(null);
 
   const handleResponse = async () => {
     if (!message.trim()) return;
@@ -102,14 +103,11 @@ const App = () => {
         }
 
         const fixedJson = cleanedSpecialAction.replace(/'/g, '"');
-        
+
         let specialAction;
         specialAction = JSON.parse(fixedJson);
-      
 
-        console.log(specialAction);
         if (specialAction.id === 1) {
-          console.log("Simulation ID:", specialAction.data);
           setPendingSAct(1);
           setSActData(specialAction.data);
 
@@ -119,14 +117,13 @@ const App = () => {
             { isUser: false, message: "Do you want to understand this concept with an interactive simulation?", timestamp: Date.now(), data: specialAction.data },
           ]);
         } else if (specialAction.id === 0) {
-          console.log("Flashcards:", specialAction.data);
           setPendingSAct(2);
           setSActData(specialAction.data);
 
           setResponses([
             ...newResponses,
             { isUser: false, message: response.response, timestamp: Date.now() },
-            { isUser: false, message: "If you want to, you can try out these flashcard", timestamp: Date.now(), data: specialAction.data },
+            { isUser: false, message: "If you want to, you can try out these flashcards", timestamp: Date.now(), data: specialAction.data },
           ]);
         }
       }
@@ -139,7 +136,6 @@ const App = () => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
-
   }, [responses]);
 
   const [user, setUser] = useState<any>(null);
@@ -181,6 +177,11 @@ const App = () => {
       authListener.subscription.unsubscribe();
     };
   }, []);
+
+  // Handle the simulation button click
+  const handleSimulationClick = () => {
+    setShowSimulation(true);  // Set simulation view to true
+  };
 
   return (
     user ? (
@@ -250,78 +251,83 @@ const App = () => {
             </div>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center relative">
-              <div 
-                className="flex flex-col w-1/2 p-4 h-5/6 overflow-y-auto"
-                ref={chatContainerRef}  
-                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-              >
-                {responses.map((chat, index) => (
-                  <div
-                    key={index}
-                    className={`flex ${chat?.data && 'flex-col'} ${chat.isUser ? "justify-end" : "justify-start"}`}
-                  >
+              {showSimulation ? (
+                <Orbitals />  // Show Orbitals component when simulation view is enabled
+              ) : (
+                <div 
+                  className="flex flex-col w-1/2 p-4 h-5/6 overflow-y-auto"
+                  ref={chatContainerRef}  
+                  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                >
+                  {responses.map((chat, index) => (
                     <div
-                      className={`${
-                        chat.isUser ? "bg-bgsec bg-opacity-50 text-white" : "text-white"
-                      } px-3 py-1.5 rounded-md my-2`}
+                      key={index}
+                      className={`flex ${chat?.data && 'flex-col'} ${chat.isUser ? "justify-end" : "justify-start"}`}
                     >
-                      <ReactMarkdown
-                        components={{
-                          h1: ({ node, ...props }) => <h1 className="text-4xl font-bold" {...props} />,
-                          h2: ({ node, ...props }) => <h2 className="text-3xl font-semibold" {...props} />,
-                          p: ({ node, ...props }) => <p className="leading-relaxed text-foreground" {...props} />,
-                          a: ({ node, ...props }) => <a className="text-blue-600" {...props} />,
-                          ul: ({ node, ...props }) => <ul className="list-disc pl-5 space-y-2" {...props} />,
-                          ol: ({ node, ...props }) => <ol className="list-decimal pl-5 space-y-2" {...props} />,
-                          blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-gray-500 pl-4 italic text-gray-600" {...props} />,
-                        }}
-                    >
-                      {chat.message}
-                    </ReactMarkdown>
-                    { !chat.isUser && chat?.data && 
-                    <div className="flex mt-2 flex-row items-center justify-center border border-foreground
-                    hover:bg-foreground hover:text-background hover:cursor-pointer transition-all duration-500 w-3/12 h-8 rounded-2xl">
-                        {getSimulationTitle(chat.data)}
-                    </div> 
-                    }
+                      <div
+                        className={`${
+                          chat.isUser ? "bg-bgsec bg-opacity-50 text-white" : "text-white"
+                        } px-3 py-1.5 rounded-md my-2`}
+                      >
+                        <ReactMarkdown
+                          components={{
+                            h1: ({ node, ...props }) => <h1 className="text-4xl font-bold" {...props} />,
+                            h2: ({ node, ...props }) => <h2 className="text-3xl font-semibold" {...props} />,
+                            p: ({ node, ...props }) => <p className="leading-relaxed text-foreground" {...props} />,
+                            a: ({ node, ...props }) => <a className="text-blue-600" {...props} />,
+                            ul: ({ node, ...props }) => <ul className="list-disc pl-5 space-y-2" {...props} />,
+                            ol: ({ node, ...props }) => <ol className="list-decimal pl-5 space-y-2" {...props} />,
+                            blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-gray-500 pl-4 italic text-gray-600" {...props} />,
+                          }}
+                        >
+                          {chat.message}
+                        </ReactMarkdown>
+                        {!chat.isUser && chat?.data && (
+                          <div
+                            className="flex mt-2 flex-row items-center justify-center border border-foreground
+                            hover:bg-foreground hover:text-background hover:cursor-pointer transition-all duration-500 w-3/12 h-8 rounded-2xl"
+                            onClick={handleSimulationClick}  // Trigger simulation view on click
+                          >
+                            {getSimulationTitle(chat.data)}
+                          </div>
+                        )}
+                      </div>
                     </div>
-
-                  </div>
-                ))}
-              </div>
-              <div
-                  className="bg-bgsec rounded-xl w-3/4 h-auto max-h-96 max-w-4xl mb-6 relative"
-              >
-                  <textarea
-                    className="bg-bgsec h-full w-full p-4 text-foreground focus:outline-none overflow-y-auto rounded-xl resize-none"
-                    placeholder="Type your message..."
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                  />
-                  <div
-                    className="absolute bottom-0 right-0 w-10 h-10 bg-background rounded-full m-2 hover:cursor-pointer hover:bg-white/20"
-                    onClick={handleResponse}
-                  >
-                    <Image
-                      src={arrowLogo}
-                      alt="->"
-                      width={256}
-                      height={256}
-                      className="p-1"
-                    />
-                  </div>
+                  ))}
                 </div>
+              )}
+              <div
+                className="bg-bgsec rounded-xl w-3/4 h-auto max-h-96 max-w-4xl mb-6 relative"
+              >
+                <textarea
+                  className="bg-bgsec h-full w-full p-4 text-foreground focus:outline-none overflow-y-auto rounded-xl resize-none"
+                  placeholder="Type your message..."
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                />
+                <div
+                  className="absolute bottom-0 right-0 w-10 h-10 bg-background rounded-full m-2 hover:cursor-pointer hover:bg-white/20"
+                  onClick={handleResponse}
+                >
+                  <Image
+                    src={arrowLogo}
+                    alt="->"
+                    width={256}
+                    height={256}
+                    className="p-1"
+                  />
+                </div>
+              </div>
             </div>
           )}
         </div>
       ) : (
-        <InitialForm user={user}/>
+        <InitialForm user={user} />
       )
     ) : (
       <NotSignedPopup />
     )
   );
-
 };
 
 export default App;

@@ -73,7 +73,7 @@ const templates = {
 
 
 
-const Orbital: React.FC = () => {
+const Orbitals: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const particlesRef = useRef<Particle[]>([]);
   const [scale, setScale] = useState(1);
@@ -233,4 +233,4 @@ const Orbital: React.FC = () => {
   );
 };
 
-export default Orbital;
+export default Orbitals;
