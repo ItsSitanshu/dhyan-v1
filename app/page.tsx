@@ -12,7 +12,7 @@ import questionLogo from "@/app/assets/icons/question.svg";
 import tipLogo from "@/app/assets/icons/tip.svg";
 import arrowLogo from "@/app/assets/icons/arrow.svg";
 
-import { rawLLM, getTokenCount, trimToMaxTokens } from "@/app/lib";
+import { tutor, getTokenCount, trimToMaxTokens, getSimulationTitle } from "@/app/lib";
 
 import SloganRotator from "@/app/components/SloganRotator";
 import NotSignedPopup from "@/app/components/NotSignedPopup";
@@ -30,6 +30,7 @@ type Chat = {
   isUser: boolean;
   message: string;
   timestamp: number;
+  data?: any;
 };
 
 const buttonData: ButtonData = {
@@ -59,6 +60,11 @@ const App = () => {
   const [message, setMessage] = useState<string>("");
   const [responses, setResponses] = useState<Chat[]>([]);
   const [chatView, setChatView] = useState<boolean>(false);
+
+  const [pendingSAct, setPendingSAct] = useState<number>(0);
+  const [sActData, setSActData] = useState<any>(false);
+
+
   const chatContainerRef = useRef<HTMLDivElement | null>(null); 
 
   const handleResponse = async () => {
@@ -75,18 +81,54 @@ const App = () => {
         return `${chat.isUser ? 'User' : 'Assistant'}: ${chat.message}\n`;
       }).join('\n');
 
-      console.log(conversationContext)
-
       const tokenCount = getTokenCount(conversationContext);
 
       if (tokenCount > MAX_TOKENS) {
         conversationContext = trimToMaxTokens(conversationContext, MAX_TOKENS);
       }
 
-      const response = await rawLLM(message, conversationContext);
+      const response = await tutor(message, conversationContext);
 
       if (response.code === 200) {
-        setResponses([...newResponses, { isUser: false, message: response.response, timestamp: Date.now() }]);
+        setResponses([
+          ...newResponses,
+          { isUser: false, message: response.response, timestamp: Date.now() },
+        ]);
+
+        const cleanedSpecialAction = response.special_action.replace(/json|`|\n/gi, '').trim();
+
+        if (cleanedSpecialAction.toLowerCase().includes("null")) {
+          return;
+        }
+
+        const fixedJson = cleanedSpecialAction.replace(/'/g, '"');
+        
+        let specialAction;
+        specialAction = JSON.parse(fixedJson);
+      
+
+        console.log(specialAction);
+        if (specialAction.id === 1) {
+          console.log("Simulation ID:", specialAction.data);
+          setPendingSAct(1);
+          setSActData(specialAction.data);
+
+          setResponses([
+            ...newResponses,
+            { isUser: false, message: response.response, timestamp: Date.now() },
+            { isUser: false, message: "Do you want to understand this concept with an interactive simulation?", timestamp: Date.now(), data: specialAction.data },
+          ]);
+        } else if (specialAction.id === 0) {
+          console.log("Flashcards:", specialAction.data);
+          setPendingSAct(2);
+          setSActData(specialAction.data);
+
+          setResponses([
+            ...newResponses,
+            { isUser: false, message: response.response, timestamp: Date.now() },
+            { isUser: false, message: "If you want to, you can try out these flashcard", timestamp: Date.now(), data: specialAction.data },
+          ]);
+        }
       }
     } catch (error) {
       console.error("Error fetching response:", error);
@@ -97,6 +139,7 @@ const App = () => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
+
   }, [responses]);
 
   const [user, setUser] = useState<any>(null);
@@ -215,15 +258,34 @@ const App = () => {
                 {responses.map((chat, index) => (
                   <div
                     key={index}
-                    className={`flex ${chat.isUser ? "justify-end" : "justify-start"}`}
+                    className={`flex ${chat?.data && 'flex-col'} ${chat.isUser ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`$ {
-                        chat.isUser ? "bg-white/30 text-white" : "text-white"
-                      } px-2 py-1.5 rounded-md my-2`}
+                      className={`${
+                        chat.isUser ? "bg-bgsec bg-opacity-50 text-white" : "text-white"
+                      } px-3 py-1.5 rounded-md my-2`}
+                    >
+                      <ReactMarkdown
+                        components={{
+                          h1: ({ node, ...props }) => <h1 className="text-4xl font-bold" {...props} />,
+                          h2: ({ node, ...props }) => <h2 className="text-3xl font-semibold" {...props} />,
+                          p: ({ node, ...props }) => <p className="leading-relaxed text-foreground" {...props} />,
+                          a: ({ node, ...props }) => <a className="text-blue-600" {...props} />,
+                          ul: ({ node, ...props }) => <ul className="list-disc pl-5 space-y-2" {...props} />,
+                          ol: ({ node, ...props }) => <ol className="list-decimal pl-5 space-y-2" {...props} />,
+                          blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-gray-500 pl-4 italic text-gray-600" {...props} />,
+                        }}
                     >
                       {chat.message}
+                    </ReactMarkdown>
+                    { !chat.isUser && chat?.data && 
+                    <div className="flex mt-2 flex-row items-center justify-center border border-foreground
+                    hover:bg-foreground hover:text-background hover:cursor-pointer transition-all duration-500 w-3/12 h-8 rounded-2xl">
+                        {getSimulationTitle(chat.data)}
+                    </div> 
+                    }
                     </div>
+
                   </div>
                 ))}
               </div>

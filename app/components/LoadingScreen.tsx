@@ -35,12 +35,12 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ status }) => {
   }, [status]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-background text-foreground">
-      <img
-        src="/loading.gif" 
-        alt="Loading..."
-        className="w-1/12 aspect-square"
-      />
+    <div className="flex flex-col items-center justify-center h-screen w-screen bg-background text-foreground">
+      <div className="atom">
+        <div className="line line-1"></div>
+        <div className="line line-2"></div>
+        <div className="line line-3"></div>
+      </div>
       <p className="text-lg font-medium">{currentStatus}</p>
     </div>
   );

@@ -4,6 +4,7 @@ import Image from "next/image";
 import AuthButton from "@/app/components/AuthButton";
 import AuthLoginForm from "@/app/components/AuthLoginForm";
 import { useState } from "react";
+import LoadingScreen from "@/app/components/LoadingScreen";
 
 export default function Login() {
     const [scale, setScale] = useState<number>(100);
@@ -39,7 +40,7 @@ export default function Login() {
                 <div className="w-1/2 h-full relative flex flex-col items-center justify-center z-0">
                     <div className="w-9/12 flex flex-col items-center justify-center pt-16">
                         <h1 className="text-foreground font-nue text-3xl">Login to your Account</h1>
-                        <p className="text-foreground/[.5]  text-lg">Welcome back! Are you ready to start selling?</p>
+                        <p className="text-foreground/[.5]  text-lg">Welcome back! Are you ready to start learning?</p>
                         <AuthButton />
                         <AuthLoginForm />
                     </div>
