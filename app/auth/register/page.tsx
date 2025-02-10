@@ -10,7 +10,6 @@ import AuthForm from "@/app/components/AuthForm";
 export default function Login() {
     const [scale, setScale] = useState<number>(200);
 
-
     return (
         <div className="flex h-screen w-screen justify-center items-center" onClick={() => setScale(170)}>
             <div className="flex flex-row justify-start w-10/12 h-5/6 bg-background rounded-3xl">
