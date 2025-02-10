@@ -29,7 +29,7 @@ const AuthLoginForm: FC = () => {
         setError((error.message).charAt(0).toUpperCase() + (error.message).slice(1));
       } else if (data.user) {
         setSuccess("Sign in successful!");
-        router.push('/');
+        router.push('/chat');
       }
     } catch (err: any) {
       console.error(err);

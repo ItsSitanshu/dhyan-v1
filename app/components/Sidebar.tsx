@@ -9,8 +9,8 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage }) => {
   const menuItems = [
     { name: "Chat", key: "chat", icon: "chat" },
     { name: "Labaratory", key: "dashboard", icon: "beaker" },
-    { name: "Resourece Library", key: "notebook", icon: "notebook" },
-    { name: "My Statistics", key: "statistics", icon: "statistics" },
+    { name: "Library", key: "notebook", icon: "notebook" },
+    { name: "Performance", key: "statistics", icon: "statistics" },
     { name: "Settings", key: "settings", icon: "settings" },
   ];
 
@@ -54,6 +54,16 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage }) => {
             );
           })}
         </nav>
+      </div>
+      <div 
+      onClick={() => router.push('/auth/logout')}
+      className="flex flex-row transition-all duration-200 hover:bg-red-500/50 hover:cursor-pointer rounded-xl p-2 items-center w-1/2 gap-2"
+      >
+        <Image width={256} height={256} alt={'<'} 
+          src={require('@/app/assets/icons/logout.svg')}
+          className="w-8 h-8 p-1"  
+        />
+        <h1 className="font-nue text-2xl mt-1">LOGOUT</h1> 
       </div>
     </div>
   );
