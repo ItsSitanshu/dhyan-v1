@@ -10,7 +10,7 @@ const CodeExample = () => {
         </p>
       </div>
 
-      <div className="w-full bg-lprim p-6 rounded-lg text-foreground text-sm overflow-x-auto">
+      <div className="w-full bg-background p-6 rounded-lg text-foreground text-sm overflow-x-auto">
         <pre>
           <code>
             {`#include <stdio.h>

@@ -17,20 +17,50 @@ Dhyan.AI is an AI-powered learning platform designed to support high school stud
 - **Backend:** Python (for AI/ML models) and Supabase (for real-time database & authentication)
 
 #### **How do i locally run this?**
-
-```sh
+``` sh
+# Create and navigate to the project directory
 mkdir dhyan.ai
 cd dhyan.ai
-git clone https://github.com/ItsSitanshu/dhyan.ai
-cd dhyan.ai/
-git checkout -m backend
-cd ..
-mv dhyan.ai > back/
-git clone https://github.com/ItsSitanshu/dhyan.ai
-mv dhyan.ai > front/
 
-# after configuring .env files on both "front" and "back
-# running npm i + npm run dev in "front"
-# installing all packages with pip in "back"
-# dhyan.ai will be up and runnning
+# Clone the repository
+git clone https://github.com/ItsSitanshu/dhyan.ai
+
+# Navigate to the cloned directory
+cd dhyan.ai/
+
+# Switch to the backend branch
+git checkout backend  
+
+# Go back to the parent directory
+cd ..
+
+# Rename the first clone to "back"
+mv dhyan.ai back
+
+# Clone the repository again for the frontend
+git clone https://github.com/ItsSitanshu/dhyan.ai
+
+# Rename the second clone to "front"
+mv dhyan.ai front
+
+# Configure the .env files in both "front" and "back"
+echo "Configure .env files manually in 'front' and 'back' before proceeding."
+
+# Install frontend dependencies and start the frontend
+cd front
+npm install
+npm run dev &  # Runs in the background
+cd ..
+
+# Install backend dependencies and start the backend
+cd back
+pip install -r requirements.txt
+# Run the backend (modify the command based on your backend framework)
+# Example for Flask: 
+# python app.py &  
+# Example for Django:  
+# python manage.py runserver &  
+cd ..
+
+echo "dhyan.ai is now up and running!"
 ```
