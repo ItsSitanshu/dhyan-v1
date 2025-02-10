@@ -39,6 +39,12 @@ const BoxGrid: React.FC<BoxGridProps> = ({
   direction = "left",
 }) => {
   const [isPaused, setIsPaused] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
+  const handleClick = (index: number) => {
+    setSelectedIndex(index);
+    setIsPaused(true); // Pause the animation when a box is clicked
+  };
 
   return (
     <div className="relative w-full overflow-hidden">
@@ -55,9 +61,10 @@ const BoxGrid: React.FC<BoxGridProps> = ({
           {[...boxItems, ...boxItems].map((item, index) => (
             <div
               key={index}
-              className="box"
+              className={`box ${selectedIndex === index ? "selected" : ""}`}
               onMouseEnter={() => setIsPaused(true)}
               onMouseLeave={() => setIsPaused(false)}
+              onClick={() => handleClick(index)}
             >
               {item}
             </div>
@@ -101,11 +108,15 @@ const BoxGrid: React.FC<BoxGridProps> = ({
           text-align: center;
           white-space: nowrap;
           cursor: pointer;
+          transition: background 0.08s;
         }
 
-        .box:hover {
+        .box:hover:not(.selected) {
           background: var(--hoverbgsec);
-          transition: 0.08s;
+        }
+
+        .selected {
+          background: var(--hoverbgsec); /* Keep the selected box highlighted */
         }
 
         @keyframes looping-scroll-left {
