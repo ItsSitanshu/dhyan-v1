@@ -6,7 +6,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ currentPage }) => {
   return (
-    <div className="w-[17rem] h-[94%] text-lsec p-4 flex flex-col justify-between">
+    <div className="w-2/12 h-[94%] text-lsec p-4 flex flex-col justify-between">
       <div>
         <div className="mb-6">
           <div className="flex flex-row items-center gap-3">

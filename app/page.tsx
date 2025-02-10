@@ -11,6 +11,8 @@ import notepadLogo from "@/app/assets/icons/notepad.svg";
 import questionLogo from "@/app/assets/icons/question.svg";
 import tipLogo from "@/app/assets/icons/tip.svg";
 import arrowLogo from "@/app/assets/icons/arrow.svg";
+import documentLogo from "@/app/assets/icons/document.svg";
+import hintLogo from "@/app/assets/icons/bulb.svg";
 
 import { tutor, getTokenCount, trimToMaxTokens, getSimulationTitle } from "@/app/lib";
 
@@ -20,6 +22,7 @@ import InitialForm from "@/app/components/InitialForm";
 import LoadingScreen from "./components/LoadingScreen";
 import Orbitals from "@/app/simulations/Orbitals";  // Import Orbitals component
 import Sidebar from "./components/Sidebar";
+import TT from "@/app/components/ToolTip";
 
 type ButtonData = {
   [key: string]: {
@@ -65,9 +68,11 @@ const App = () => {
 
   const [pendingSAct, setPendingSAct] = useState<number>(0);
   const [sActData, setSActData] = useState<any>(false);
+  
 
   const [showSimulation, setShowSimulation] = useState(false); // New state for simulation view
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
+  const smallMsgRef = useRef<any>(null);
 
   const handleResponse = async () => {
     if (!message.trim()) return;
@@ -114,8 +119,7 @@ const App = () => {
 
           setResponses([
             ...newResponses,
-            { isUser: false, message: response.response, timestamp: Date.now() },
-            { isUser: false, message: "Do you want to understand this concept with an interactive simulation?", timestamp: Date.now(), data: specialAction.data },
+            { isUser: false, message: response.response, timestamp: Date.now(), data: specialAction.data },
           ]);
         } else if (specialAction.id === 0) {
           setPendingSAct(2);
@@ -123,8 +127,7 @@ const App = () => {
 
           setResponses([
             ...newResponses,
-            { isUser: false, message: response.response, timestamp: Date.now() },
-            { isUser: false, message: "If you want to, you can try out these flashcards", timestamp: Date.now(), data: specialAction.data },
+            { isUser: false, message: response.response, timestamp: Date.now(), data: specialAction.data },
           ]);
         }
       }
@@ -187,9 +190,13 @@ const App = () => {
     user ? (
       
       dbUser ? (
-        <div className="h-screen bg-black flex items-center p-4">
+        <div className="h-screen bg-lprim flex items-center p-4">
           <Sidebar currentPage="home"/>
-            <div className="flex w-11/12 h-[94%] rounded-[3rem]  bg-background flex-col items-center justify-center relative">
+            <div        
+            // style={{
+            //   background: `linear-gradient(180deg, var(--prim1) 0%, var(--sec1) -90%, var(--prim2) 100%, var(--sec2) 200%)`,
+            // }}            
+            className="flex bg-opacity-25 w-[82%] h-[94%] rounded-[4rem] bg-bgsec flex-col items-center justify-center relative">
               {/* <SloganRotator />
               <div
                 className="bg-bgsec rounded-xl w-3/4 h-auto max-h-96 max-w-4xl mb-6 relative"
@@ -233,11 +240,14 @@ const App = () => {
                 ))}
               </div>
             </div> */}
-              {showSimulation ? (
+              {/* <Image src={require('@/app/assets/images/logo_blur.svg')} 
+              width={512} height={512} alt="logo" className="absolute p-10"
+              /> */}
+              { showSimulation ? (
                 <Orbitals />  // Show Orbitals component when simulation view is enabled
               ) : (
                 <div 
-                  className="flex flex-col w-full p-9 h-5/6 overflow-y-auto"
+                  className="flex flex-col w-4/6 p-9 h-5/6 overflow-y-auto"
                   ref={chatContainerRef}  
                   style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 >
@@ -247,18 +257,20 @@ const App = () => {
                       className={`flex ${chat?.data && 'flex-col'} ${chat.isUser ? "justify-end" : "justify-start"}`}
                     >
                       <div
-                        className={`${
-                          chat.isUser ? "bg-bgsec bg-opacity-50 text-white" : "text-white"
-                        } px-3 py-1.5 rounded-md my-2`}
+                        style={{
+                          background: `linear-gradient(180deg, rgba(var(--prim1), 0.1) 0%, rgba(var(--sec1), 0.1) 30%, rgba(var(--prim2), 0.1) 100%, rgba(var(--sec2), 0.1) 200%)`,
+                        }}                        
+                        className={`px-3 py-3 font-normal rounded-2xl my-2 ${chat.isUser ? 'bg-foreground' : ''} bg-opacity-20 z-50`}
                       >
                         <ReactMarkdown
                           components={{
                             h1: ({ node, ...props }) => <h1 className="text-4xl font-bold" {...props} />,
                             h2: ({ node, ...props }) => <h2 className="text-3xl font-semibold" {...props} />,
-                            p: ({ node, ...props }) => <p className="leading-relaxed text-foreground" {...props} />,
+                            p: ({ node, ...props }) => <p className="leading-relaxed text-background" {...props} />,
                             a: ({ node, ...props }) => <a className="text-blue-600" {...props} />,
                             ul: ({ node, ...props }) => <ul className="list-disc pl-5 space-y-2" {...props} />,
                             ol: ({ node, ...props }) => <ol className="list-decimal pl-5 space-y-2" {...props} />,
+                            li: ({ node, ...props }) => <li className="text-background" {...props} />,
                             blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-gray-500 pl-4 italic text-gray-600" {...props} />,
                           }}
                         >
@@ -267,8 +279,8 @@ const App = () => {
                         {!chat.isUser && chat?.data && (
                           <div
                             className="flex mt-2 flex-row items-center justify-center border border-foreground
-                            hover:bg-foreground hover:text-background hover:cursor-pointer transition-all duration-500 w-3/12 h-8 rounded-2xl"
-                            onClick={handleSimulationClick}  // Trigger simulation view on click
+                            bg-background hover:cursor-pointer transition-all duration-500 w-3/4 h-12 rounded-2xl"
+                            onClick={handleSimulationClick}  
                           >
                             {getSimulationTitle(chat.data)}
                           </div>
@@ -279,16 +291,51 @@ const App = () => {
                 </div>
               )}
               <div
-                className="bg-bgsec rounded-xl w-3/4 h-auto max-h-96 max-w-4xl mb-6 relative"
+                className="flex flex-row items-center justify-center space-x-4 rounded-xl w-3/4 h-12  relative"
               >
+                
+                  {/* <TT text="Select documents to reference"><div
+                    className="flex items-center justify-center w-12 h-12 bg-foreground rounded-xl
+                    transition-all hover:scale-105 duration-300 hover:cursor-pointer"
+                    onClick={handleResponse}
+                  >
+                    <Image
+                      src={hintLogo}
+                      alt="->"
+                      width={256}
+                      height={256}
+                      className="p-1.5 w-10 h-10"
+                    />
+                  </div></TT> */}
                 <textarea
-                  className="bg-bgsec h-full w-full p-4 text-foreground focus:outline-none overflow-y-auto rounded-xl resize-none"
+                  className="bg-foreground h-12 w-3/4 p-3 pl-7 text-background focus:outline-none overflow-y-auto rounded-xl resize-none"
                   placeholder="Type your message..."
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
+                  onKeyDown={(e) => {
+                    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+                      e.preventDefault(); 
+                      handleResponse();
+                    }
+                  }}
                 />
+                <div className="flex flex-row space-x-2">
+                  <TT text="Select documents to reference"><div
+                    className="flex items-center justify-center w-12 h-12 bg-foreground rounded-xl
+                    transition-all hover:scale-105 duration-300 hover:cursor-pointer"
+                    onClick={handleResponse}
+                  >
+                    <Image
+                      src={documentLogo}
+                      alt="+"
+                      width={256}
+                      height={256}
+                      className="p-1.5 w-10 h-10"
+                    />
+                  </div></TT>
                 <div
-                  className="absolute bottom-0 right-0 w-10 h-10 bg-background rounded-full m-2 hover:cursor-pointer hover:bg-foreground"
+                  className="flex items-center justify-center w-12 h-12 bg-foreground rounded-xl
+                    transition-all hover:scale-105 duration-300 hover:cursor-pointer"
                   onClick={handleResponse}
                 >
                   <Image
@@ -296,12 +343,12 @@ const App = () => {
                     alt="->"
                     width={256}
                     height={256}
-                    className="p-1"
+                    className="p-1.5 w-10 h-10"
                   />
+                </div>
                 </div>
               </div>
             </div>
-          )}
         </div>
       ) : (
         <InitialForm user={user} />

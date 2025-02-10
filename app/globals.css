@@ -1,24 +1,26 @@
 @import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Luxurious+Roman&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #212121;
-  --prim1: #3d348b;
-  --sec1: #7678ed;
-	--prim2: #023e8a;
-	--sec2: #219ebc;
-  --lprim: #0a0707;
-  --psec: #d8c4b6;
-  --lsec: #f5efe7;
-  --bgsec: #f7f7f7;
+  --background: rgb(255, 255, 255);
+  --foreground: rgb(33, 33, 33);
+  --prim1: rgb(61, 52, 139);
+  --sec1: rgb(118, 120, 237);
+  --prim2: rgb(2, 62, 138);
+  --sec2: rgb(33, 158, 188);
+  --lprim: rgb(10, 7, 7);
+  --psec: rgb(216, 196, 182);
+  --lsec: rgb(245, 239, 231);
+  --bgsec: rgb(20, 16, 16);  
 }
 
 * {
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "Montserrat", serif;
+  /* font-family: "Plus Jakarta Sans", sans-serif; */
 }
 
 

@@ -27,7 +27,11 @@ const templates = {
   Neptune: { mass: 1.55, radius: 8, color: "blue", a: 4495.1, e: 0.010 }
 };
 
-const Orbitals: React.FC = () => {
+interface OrbitalsInterface {
+  parentRef?: any;
+}
+
+const Orbitals: React.FC<OrbitalsInterface> = ({ parentRef = null }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const particlesRef = useRef<Particle[]>([]);
   const FPS = 60;
@@ -39,9 +43,16 @@ const Orbitals: React.FC = () => {
     if (!ctx) return;
 
     const resizeCanvas = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      if (!parentRef) return;
+
+      if (parentRef.current && canvasRef.current) {
+        const { width, height } = parentRef.current.getBoundingClientRect();
+        const canvas = canvasRef.current;
+        canvas.width = width;
+        canvas.height = height;
+      }
     };
+
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
 
