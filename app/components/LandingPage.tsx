@@ -12,7 +12,9 @@ const LandingPage = () => {
       <HeroSection />
       <FeatureSection />
       <CodeExample />
-      <BoxGrid />
+      <BoxGrid direction={1} speed={15}/>
+      <BoxGrid direction={1} speed={15}/>
+      <BoxGrid direction={1} speed={15}/>
     </div>
   );
 };
