@@ -27,7 +27,7 @@ const boxItems = [
     "What is the difference between mitosis and meiosis?",
     "How does photosynthesis work in plants?",
     "Can you explain the Pythagorean theorem with an example?",
-    "How do I solve quadratic equations using the quadratic formula?"
+    "How do I solve quadratic equations using the quadratic formula?",
   ],
   [
     "Write a message that goes with a kitten gif for a friend on a rough day",
@@ -54,7 +54,7 @@ const boxItems = [
     "What is the difference between mitosis and meiosis?",
     "How does photosynthesis work in plants?",
     "Can you explain the Pythagorean theorem with an example?",
-    "How do I solve quadratic equations using the quadratic formula?"
+    "How do I solve quadratic equations using the quadratic formula?",
   ],
   [
     "Write a message that goes with a kitten gif for a friend on a rough day",
@@ -81,8 +81,8 @@ const boxItems = [
     "What is the difference between mitosis and meiosis?",
     "How does photosynthesis work in plants?",
     "Can you explain the Pythagorean theorem with an example?",
-    "How do I solve quadratic equations using the quadratic formula?"
-  ]
+    "How do I solve quadratic equations using the quadratic formula?",
+  ],
 ];
 
 interface BoxGridProps {
@@ -91,8 +91,11 @@ interface BoxGridProps {
   direction?: "left" | "right";
 }
 
-
-const BoxGrid: React.FC<BoxGridProps> = ({ nth, speed = 90, direction = "left" }) => {
+const BoxGrid: React.FC<BoxGridProps> = ({
+  nth,
+  speed = 90,
+  direction = "left",
+}) => {
   const [isPaused, setIsPaused] = useState(false);
   const boxItemsList = boxItems[nth];
 
@@ -100,16 +103,18 @@ const BoxGrid: React.FC<BoxGridProps> = ({ nth, speed = 90, direction = "left" }
     <div className="relative w-full overflow-hidden">
       <div className="flex width-full overflow-hidden whitespace-nowrap relative">
         <div
-          className={`flex w-max ${direction === "left" ? "marquee-left" : "marquee-right"}`}
+          className={`flex w-max ${
+            direction === "left" ? "marquee-left" : "marquee-right"
+          }`}
           style={{
             animationDuration: `${speed}s`,
-            animationPlayState: isPaused ? "paused" : "running"
+            animationPlayState: isPaused ? "paused" : "running",
           }}
         >
           {[...boxItemsList, ...boxItemsList].map((item, index) => (
-            <div 
-              key={index} 
-              className="box" 
+            <div
+              key={index}
+              className="box"
               onMouseEnter={() => setIsPaused(true)}
               onMouseLeave={() => setIsPaused(false)}
             >
@@ -157,18 +162,26 @@ const BoxGrid: React.FC<BoxGridProps> = ({ nth, speed = 90, direction = "left" }
         }
 
         .box:hover {
-          transition : 200ms;
+          transition: 200ms;
           scale: 102%;
         }
 
         @keyframes looping-scroll-left {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
         }
 
         @keyframes looping-scroll-right {
-          0% { transform: translateX(-50%); }
-          100% { transform: translateX(0); }
+          0% {
+            transform: translateX(-50%);
+          }
+          100% {
+            transform: translateX(0);
+          }
         }
       `}</style>
     </div>
