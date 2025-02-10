@@ -3,10 +3,7 @@ import Header from "@/app/components/Header";
 import HeroSection from "@/app/components/HeroSection";
 import FeatureSection from "@/app/components/FeatureSection";
 import CodeExample from "@/app/components/CodeExample";
-import BoxGrid1 from "@/app/components/BoxGrid1";
-import BoxGrid2 from "@/app/components/BoxGrid2";
-import BoxGrid3 from "@/app/components/BoxGrid3";
-
+import BoxGrid from "@/app/components/BoxGrid";
 
 const LandingPage = () => {
   return (
@@ -15,9 +12,9 @@ const LandingPage = () => {
       <HeroSection />
       <FeatureSection />
       <CodeExample />
-      <BoxGrid1 />
-      <BoxGrid2 />
-      <BoxGrid3 />
+      <BoxGrid speed={140} direction="right" />
+      <BoxGrid speed={140} direction="left" />
+      <BoxGrid speed={140} direction="right" />
     </div>
   );
 };

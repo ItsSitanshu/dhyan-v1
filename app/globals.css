@@ -16,6 +16,7 @@
   --psec: rgb(216, 196, 182);
   --lsec: rgb(245, 239, 231);
   --bgsec: rgb(20, 16, 16);  
+  --hoverbgsec: rgb(7, 6, 6);  
 }
 
 * {
