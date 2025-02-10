@@ -19,6 +19,7 @@ import NotSignedPopup from "@/app/components/NotSignedPopup";
 import InitialForm from "@/app/components/InitialForm";
 import LoadingScreen from "./components/LoadingScreen";
 import Orbitals from "@/app/simulations/Orbitals";  // Import Orbitals component
+import Sidebar from "./components/Sidebar";
 
 type ButtonData = {
   [key: string]: {
@@ -178,35 +179,18 @@ const App = () => {
     };
   }, []);
 
-  // Handle the simulation button click
   const handleSimulationClick = () => {
     setShowSimulation(true);  // Set simulation view to true
   };
 
   return (
     user ? (
+      
       dbUser ? (
-        <div className="h-screen flex">
-          <div className="w-64 bg-bgsec text-lsec p-4 flex flex-col justify-between">
-            <div>
-              <div className="mb-6">
-                <div className="flex flex-row items-center gap-3">
-                  <h2 className="text-3xl mt-1 font-nue">Dhyan.AI</h2>
-                </div>
-              </div>
-            </div>
-            <div className="text-sm">
-              <div className="mb-4">
-                <button className="bg-background py-2 px-4 rounded-full w-full">
-                  Upgrade plan
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {!chatView ? (
-            <div className="flex-1 flex flex-col items-center justify-center relative">
-              <SloganRotator />
+        <div className="h-screen bg-black flex items-center p-4">
+          <Sidebar currentPage="home"/>
+            <div className="flex w-11/12 h-[94%] rounded-[3rem]  bg-background flex-col items-center justify-center relative">
+              {/* <SloganRotator />
               <div
                 className="bg-bgsec rounded-xl w-3/4 h-auto max-h-96 max-w-4xl mb-6 relative"
               >
@@ -217,7 +201,7 @@ const App = () => {
                   onChange={(e) => setMessage(e.target.value)}
                 />
                 <div
-                  className="absolute bottom-0 right-0 w-10 h-10 bg-background rounded-full m-2 hover:cursor-pointer hover:bg-white/20"
+                  className="absolute bottom-0 right-0 w-10 h-10 bg-background rounded-full m-2 transition-all duration-300 hover:cursor-pointer hover:bg-foreground bg-opacity-5"
                   onClick={handleResponse}
                 >
                   <Image
@@ -248,14 +232,12 @@ const App = () => {
                   </button>
                 ))}
               </div>
-            </div>
-          ) : (
-            <div className="flex-1 flex flex-col items-center justify-center relative">
+            </div> */}
               {showSimulation ? (
                 <Orbitals />  // Show Orbitals component when simulation view is enabled
               ) : (
                 <div 
-                  className="flex flex-col w-1/2 p-4 h-5/6 overflow-y-auto"
+                  className="flex flex-col w-full p-9 h-5/6 overflow-y-auto"
                   ref={chatContainerRef}  
                   style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 >
@@ -306,7 +288,7 @@ const App = () => {
                   onChange={(e) => setMessage(e.target.value)}
                 />
                 <div
-                  className="absolute bottom-0 right-0 w-10 h-10 bg-background rounded-full m-2 hover:cursor-pointer hover:bg-white/20"
+                  className="absolute bottom-0 right-0 w-10 h-10 bg-background rounded-full m-2 hover:cursor-pointer hover:bg-foreground"
                   onClick={handleResponse}
                 >
                   <Image

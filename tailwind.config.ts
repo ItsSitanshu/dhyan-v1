@@ -17,6 +17,8 @@ export default {
         foreground: "var(--foreground)",
         prim1: "var(--prim1)",
         prim2: "var(--prim2)",
+        sec1: "var(--sec1)",
+        sec2: "var(--sec2)",
         bgsec: "var(--bgsec)",
         lprim: "var(--lprim)",
         psec: "var(--psec)",

@@ -5,26 +5,22 @@
 @tailwind utilities;
 
 :root {
-  --background: #f0e5d6;
+  --background: #ffffff;
   --foreground: #212121;
-  --prim1: #2f5540;
-  --prim2: #4a7856;
+  --prim1: #3d348b;
+  --sec1: #7678ed;
+	--prim2: #023e8a;
+	--sec2: #219ebc;
   --lprim: #0a0707;
   --psec: #d8c4b6;
   --lsec: #f5efe7;
-  --bgsec: #181818;
+  --bgsec: #f7f7f7;
 }
 
 * {
   font-family: "Plus Jakarta Sans", sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0e0e0e;
-    --foreground: #f0e5d6;
-  }
-}
 
 body {
   color: var(--foreground);
