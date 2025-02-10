@@ -25,9 +25,9 @@ git clone https://github.com/ItsSitanshu/dhyan.ai
 cd dhyan.ai/
 git checkout -m backend
 cd ..
-mv dhyan.ai > back
+mv dhyan.ai > back/
 git clone https://github.com/ItsSitanshu/dhyan.ai
-mv dhyan.ai > front
+mv dhyan.ai > front/
 
 # after configuring .env files on both "front" and "back
 # running npm i + npm run dev in "front"
