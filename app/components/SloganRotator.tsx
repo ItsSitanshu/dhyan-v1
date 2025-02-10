@@ -72,7 +72,10 @@ const SloganRotator: React.FC<SloganRotatorInterface> = ({
   }, [typedSlogan, isDeleting, sloganIndex, slogans]);
 
   return (
-    <h1 className="text-2xl font-bold mb-6">I'm Dhyan, {typedSlogan}</h1>
+    <div className="flex flex-col items-center ">
+    <h1 className="text-6xl font-semibold mb-6">I'm Dhyan,</h1>
+    <h1 className="text-xl font-semibold mb-6">{typedSlogan}</h1>
+    </div>
   );
 };
 
