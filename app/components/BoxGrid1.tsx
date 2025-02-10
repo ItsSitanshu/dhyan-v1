@@ -38,7 +38,7 @@ const BoxGrid1: React.FC<BoxGridProps> = ({ speed = 90, direction = "left" }) =>
   const [isPaused, setIsPaused] = useState(false);
 
   return (
-    <div className="relative w-full overflow-hidden px-5">
+    <div className="relative w-full overflow-hidden">
       <div className="carousel-track">
         <div
           className={`carousel-track-inner ${direction === "left" ? "marquee-left" : "marquee-right"}`}

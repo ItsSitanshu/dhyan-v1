@@ -38,7 +38,7 @@ const BoxGrid3: React.FC<BoxGridProps> = ({ speed = 90, direction = "left" }) =>
   const [isPaused, setIsPaused] = useState(false);
 
   return (
-    <div className="relative w-full overflow-hidden px-5">
+    <div className="relative w-full overflow-hidden">
       <div className="carousel-track">
         <div
           className={`carousel-track-inner ${direction === "left" ? "marquee-left" : "marquee-right"}`}
@@ -88,7 +88,7 @@ const BoxGrid3: React.FC<BoxGridProps> = ({ speed = 90, direction = "left" }) =>
           flex: 0 0 auto;
           padding: 22px 40px;
           margin: 8px;
-          background: #3D358A;
+          background: var(--bgsec);
           color: white;
           font-size: 16px;
           border-radius: 12px;
@@ -98,8 +98,8 @@ const BoxGrid3: React.FC<BoxGridProps> = ({ speed = 90, direction = "left" }) =>
         }
 
         .box:hover {
-          background : #283574;
-          transition : 0.08s ;
+          transition : 200ms;
+          scale: 102%;
         }
 
         @keyframes looping-scroll-left {

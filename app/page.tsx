@@ -196,7 +196,7 @@ const App = () => {
             // style={{
             //   background: `linear-gradient(180deg, var(--prim1) 0%, var(--sec1) -90%, var(--prim2) 100%, var(--sec2) 200%)`,
             // }}            
-            className="flex bg-opacity-25 w-[82%] h-[94%] rounded-[4rem] bg-bgsec flex-col items-center justify-center relative">
+            className="flex bg-opacity-25 w-[82%] h-[94%] rounded-[3rem] bg-bgsec flex-col items-center justify-center relative">
               {/* <SloganRotator />
               <div
                 className="bg-bgsec rounded-xl w-3/4 h-auto max-h-96 max-w-4xl mb-6 relative"
@@ -256,12 +256,16 @@ const App = () => {
                       key={index}
                       className={`flex ${chat?.data && 'flex-col'} ${chat.isUser ? "justify-end" : "justify-start"}`}
                     >
+  
                       <div
-                        style={{
-                          background: `linear-gradient(180deg, rgba(var(--prim1), 0.1) 0%, rgba(var(--sec1), 0.1) 30%, rgba(var(--prim2), 0.1) 100%, rgba(var(--sec2), 0.1) 200%)`,
-                        }}                        
-                        className={`px-3 py-3 font-normal rounded-2xl my-2 ${chat.isUser ? 'bg-foreground' : ''} bg-opacity-20 z-50`}
+                        // style={{
+                        //   background: `${!chat.isUser ? 'linear-gradient(180deg, var(--prim1) 0%, var(--sec1) 30%, var(--prim2) 100%, var(--sec2) 200%)' : 'none'}`,
+                        // }}                        
+                        className={`relative px-3 py-3 font-normal rounded-2xl my-2 ${chat.isUser ? 'bg-foreground' : ''} bg-opacity-20 z-50`}
                       >
+                        {!chat.isUser && (
+                          <div className="absolute inset-0 rounded-2xl opacity-10" style={{ background: 'linear-gradient(180deg, var(--prim1) 0%, var(--sec1) 30%, var(--prim2) 100%, var(--sec2) 200%)' }}></div>
+                        )}
                         <ReactMarkdown
                           components={{
                             h1: ({ node, ...props }) => <h1 className="text-4xl font-bold" {...props} />,
@@ -279,7 +283,7 @@ const App = () => {
                         {!chat.isUser && chat?.data && (
                           <div
                             className="flex mt-2 flex-row items-center justify-center border border-foreground
-                            bg-background hover:cursor-pointer transition-all duration-500 w-3/4 h-12 rounded-2xl"
+                            bg-background hover:cursor-pointer transition-all duration-500 w-3/12 h-6 p-3 py-4 rounded-2xl"
                             onClick={handleSimulationClick}  
                           >
                             {getSimulationTitle(chat.data)}
