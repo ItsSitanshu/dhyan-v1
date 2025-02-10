@@ -46,7 +46,7 @@ const AuthLoginForm: FC = () => {
             <input
               type="email"
               placeholder="e.g. haribahadur@gmail.com"
-              className="bg-bgsec h-16 text-[1rem] rounded-lg pl-3 m-0 w-full focus:outline-none focus:border focus:border-foreground/40 text-foreground"
+              className="bg-bgsec h-16 text-[1rem] rounded-lg pl-3 m-0 w-full focus:outline-none focus:border focus:border-foreground/40 text-white"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -59,7 +59,7 @@ const AuthLoginForm: FC = () => {
             <input
               type="password"
               placeholder="e.g. sec!!rE@321"
-              className="bg-bgsec h-16 text-[1rem] rounded-lg pl-3 m-0 w-full focus:outline-none focus:border focus:border-foreground/40"
+              className="bg-bgsec text-white h-16 text-[1rem] rounded-lg pl-3 m-0 w-full focus:outline-none focus:border focus:border-foreground/40"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />

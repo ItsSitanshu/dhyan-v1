@@ -60,7 +60,7 @@ const AuthForm: FC = () => {
             <input
               type="text"
               placeholder="e.g. Hari"
-              className="bg-bgsec h-full  text-sm rounded-lg pl-2 m-0 w-full focus:outline-none focus:border focus:border-foreground/40"
+              className="bg-bgsec h-full text-white text-sm rounded-lg pl-2 m-0 w-full focus:outline-none focus:border focus:border-foreground/40"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
             />
@@ -70,7 +70,7 @@ const AuthForm: FC = () => {
             <input
               type="text"
               placeholder="e.g. B. Aacharya"
-              className="bg-bgsec h-full  text-sm rounded-lg pl-2 m-0 w-full focus:outline-none focus:border focus:border-foreground/40"
+              className="bg-bgsec h-full text-white text-sm rounded-lg pl-2 m-0 w-full focus:outline-none focus:border focus:border-foreground/40"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
             />
@@ -83,7 +83,7 @@ const AuthForm: FC = () => {
             <input
               type="email"
               placeholder="e.g. haribahadur@gmail.com"
-              className="bg-bgsec h-full text-sm rounded-lg pl-2 m-0 w-full focus:outline-none focus:border focus:border-foreground/40"
+              className="bg-bgsec text-white h-full text-sm rounded-lg pl-2 m-0 w-full focus:outline-none focus:border focus:border-foreground/40"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -96,7 +96,7 @@ const AuthForm: FC = () => {
             <input
               type="password"
               placeholder="e.g. sec!!rE@321"
-              className="bg-bgsec h-full text-sm rounded-lg pl-2 m-0 w-full focus:outline-none focus:border focus:border-foreground/40"
+              className="bg-bgsec h-full text-white text-sm rounded-lg pl-2 m-0 w-full focus:outline-none focus:border focus:border-foreground/40"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
