@@ -55,11 +55,8 @@ cd ..
 # Install backend dependencies and start the backend
 cd back
 pip install -r requirements.txt
-# Run the backend (modify the command based on your backend framework)
-# Example for Flask: 
-# python app.py &  
-# Example for Django:  
-# python manage.py runserver &  
+# Run the backend
+python server.py
 cd ..
 
 echo "dhyan.ai is now up and running!"
