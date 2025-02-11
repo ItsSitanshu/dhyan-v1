@@ -1,120 +1,117 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import React, { useRef, useEffect, useState } from "react";
+import Matter from "matter-js";
 
-export default function ProjectileMotion() {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [angle, setAngle] = useState(45);
-  const [speed, setSpeed] = useState(50);
-  const [isLaunched, setIsLaunched] = useState(false);
-  const [trajectory, setTrajectory] = useState<{ x: number; y: number }[]>([]);
-
-  const gravity = 9.81;
-  let animationFrameId: number;
+const ProjectileSimulation: React.FC = () => {
+  const sceneRef = useRef<HTMLDivElement>(null);
+  const [angle, setAngle] = useState<number>(45);
+  const [velocity, setVelocity] = useState<number>(50);
+  const [engine, setEngine] = useState<Matter.Engine | null>(null);
+  const projectileRef = useRef<Matter.Body | null>(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    if (!sceneRef.current) return;
 
-    // Canvas size
-    canvas.width = 600;
-    canvas.height = 400;
+    const { Engine, Render, Runner, Composite, Bodies, World } = Matter;
+    const newEngine = Engine.create();
+    setEngine(newEngine);
 
-    // Draw initial scene
-    drawScene(ctx);
+    const render = Render.create({
+      element: sceneRef.current,
+      engine: newEngine,
+      options: {
+        width: window.innerWidth,
+        height: window.innerHeight,
+        background: "#111",
+        wireframes: false,
+      },
+    });
 
-    return () => cancelAnimationFrame(animationFrameId);
+    Render.run(render);
+    const runner = Runner.create();
+    Runner.run(runner, newEngine);
+
+    const ground = Bodies.rectangle(
+      window.innerWidth / 2,
+      window.innerHeight - 20,
+      window.innerWidth,
+      40,
+      { isStatic: true, render: { fillStyle: "#444" } }
+    );
+
+    World.add(newEngine.world, [ground]);
+
+    return () => {
+      Render.stop(render);
+      Runner.stop(runner);
+      Composite.clear(newEngine.world, false);
+      Engine.clear(newEngine);
+      render.canvas.remove();
+    };
   }, []);
 
-  const drawScene = (ctx: CanvasRenderingContext2D) => {
-    ctx.clearRect(0, 0, 600, 400);
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, 600, 400);
-
-    // Draw ground
-    ctx.fillStyle = "green";
-    ctx.fillRect(0, 380, 600, 20);
-
-    // Draw projectile path
-    ctx.fillStyle = "white";
-    trajectory.forEach(({ x, y }) => ctx.fillRect(x, y, 2, 2));
-  };
-
   const launchProjectile = () => {
-    setIsLaunched(true);
-    setTrajectory([]);
+    if (!engine || !sceneRef.current) return;
 
-    let x = 50;
-    let y = 350;
-    let vx = speed * Math.cos((angle * Math.PI) / 180);
-    let vy = -speed * Math.sin((angle * Math.PI) / 180);
-    let t = 0;
+    const { Composite, Bodies, Body } = Matter;
 
-    const update = () => {
-      if (!canvasRef.current) return;
-      const ctx = canvasRef.current.getContext("2d");
-      if (!ctx) return;
+    if (projectileRef.current) {
+      Composite.remove(engine.world, projectileRef.current);
+    }
 
-      // Physics equations
-      x = 50 + vx * t;
-      y = 350 + vy * t + 0.5 * gravity * t * t;
+    const radianAngle = (angle * Math.PI) / 180;
+    const vx = velocity * Math.cos(radianAngle);
+    const vy = -velocity * Math.sin(radianAngle);
 
-      if (y >= 380) {
-        setIsLaunched(false);
-        return;
-      }
+    const projectile = Bodies.circle(100, window.innerHeight - 100, 10, {
+      restitution: 0.8,
+      friction: 0.1,
+      render: { fillStyle: "#4ECDC4" },
+    });
 
-      setTrajectory((prev) => [...prev, { x, y }]);
-      drawScene(ctx);
+    projectileRef.current = projectile;
+    Body.setVelocity(projectile, { x: vx, y: vy });
 
-      animationFrameId = requestAnimationFrame(update);
-      t += 0.1;
-    };
-
-    update();
+    Composite.add(engine.world, projectile);
   };
 
   return (
-    <div className="flex flex-col items-center p-5 text-white bg-gray-900 min-h-screen">
-      <h1 className="text-2xl font-bold mb-4">Projectile Motion Simulator</h1>
-
-      <canvas ref={canvasRef} className="border border-white mb-4"></canvas>
-
-      <div className="flex gap-4">
-        <div>
-          <label className="block text-sm">Angle ({angle}°)</label>
+    <div className="h-screen w-full flex flex-col items-center justify-center bg-black text-white">
+      <div className="absolute top-4 left-4 bg-gray-900 p-4 rounded-lg shadow-lg">
+        <label className="block mb-2">
+          Angle: {angle}°
           <input
             type="range"
             min="0"
             max="90"
             value={angle}
             onChange={(e) => setAngle(Number(e.target.value))}
-            className="w-32"
+            className="w-full mt-1"
           />
-        </div>
-
-        <div>
-          <label className="block text-sm">Speed ({speed} m/s)</label>
+        </label>
+        <label className="block mb-2">
+          Velocity: {velocity} m/s
           <input
             type="range"
             min="10"
             max="100"
-            value={speed}
-            onChange={(e) => setSpeed(Number(e.target.value))}
-            className="w-32"
+            value={velocity}
+            onChange={(e) => setVelocity(Number(e.target.value))}
+            className="w-full mt-1"
           />
-        </div>
+        </label>
+        <button
+          onClick={launchProjectile}
+          className="w-full bg-blue-500 px-4 py-2 rounded-lg mt-2"
+        >
+          Launch
+        </button>
       </div>
 
-      <button
-        onClick={launchProjectile}
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        disabled={isLaunched}
-      >
-        {isLaunched ? "Launching..." : "Launch"}
-      </button>
+      <div ref={sceneRef} className="h-full w-full"></div>
     </div>
   );
-}
+};
+
+export default ProjectileSimulation;
