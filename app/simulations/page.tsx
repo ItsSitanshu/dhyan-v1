@@ -3,10 +3,7 @@ import FrictionSimulation from "./Friction";
 import Orbitals from "./Orbitals";
 
 const Simulation = () => {
-  return (
-    <Orbitals/>
-    // <FrictionSimulation/>
-  )
-}
+  return <Orbitals />;
+};
 
 export default Simulation;
