@@ -41,7 +41,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ status }) => {
         <div className="line line-2"></div>
         <div className="line line-3"></div>
       </div>
-      <p className="text-lg font-medium">{currentStatus}</p>
+      <p className="text-lg w-[72%] font-medium">{currentStatus}</p>
     </div>
   );
 };

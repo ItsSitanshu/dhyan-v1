@@ -132,22 +132,17 @@ const Orbitals: React.FC<OrbitalsInterface> = ({ parentRef = null }) => {
     const a = template.a * SCALE; // Semi-major axis
     const e = template.e; // Eccentricity
   
-    // Start at a random point in the orbit for variation
     const trueAnomaly = Math.random() * 2 * Math.PI; 
   
-    // Compute position using parametric ellipse equations
     const r = a * (1 - e * e) / (1 + e * Math.cos(trueAnomaly)); // Distance from the Sun
     const x = r * Math.cos(trueAnomaly);
     const y = r * Math.sin(trueAnomaly) * Math.sqrt(1 - e * e);
   
-    // Convert to canvas coordinates (placing Sun at center)
     const planetX = canvas.width / 2 + x;
     const planetY = canvas.height / 2 + y;
   
-    // Compute orbital velocity using Vis-Viva equation
     const orbitalVelocity = Math.sqrt(G * SUN_MASS * ((2 / r) - (1 / a)));
   
-    // Velocity components (tangential to the orbit)
     const vx = -orbitalVelocity * Math.sin(trueAnomaly);
     const vy = orbitalVelocity * Math.cos(trueAnomaly);
   

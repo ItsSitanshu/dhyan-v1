@@ -28,6 +28,7 @@ interface InitialFormInterface {
   user: any;
 }
 
+
 const InitialForm: React.FC<InitialFormInterface> = ({ user }) => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({

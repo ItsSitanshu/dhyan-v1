@@ -50,8 +50,9 @@ function trimToMaxTokens(text: string, maxTokens: number): string {
 }
 
 const simulationTitles: Record<string, string> = {
-  "newtons_laws_simulation": "Newton’s Laws of Motion",
+  "newtons_laws_simulation": "Newton's Laws",
   "projectile_motion_simulation": "Projectile Motion",
+  "friction_simulation": "Friction Simulation",
   "electric_circuit_simulation": "Electric Circuits",
   "gravity_orbit_simulation": "Gravity and Orbits",
   "fluid_dynamics_simulation": "Fluid Pressure & Buoyancy",
