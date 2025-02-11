@@ -1,9 +1,15 @@
 import CollisionFiltering from "./Collision";
+import ProjectileMotion from "./ProjectileMotion";
 import FrictionSimulation from "./Friction";
 import Orbitals from "./Orbitals";
 
 const Simulation = () => {
-  return <Orbitals />;
+  return(
+    // <CollisionFiltering />
+    <ProjectileMotion />
+    // <FrictionSimulation />
+    // <Orbitals />
+  );
 };
 
 export default Simulation;

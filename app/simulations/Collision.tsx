@@ -1,162 +1,266 @@
-"use client"; // ONLY for Next.js
-
-import { useEffect, useRef } from "react";
+"use client";
+import React, { useRef, useEffect, useState } from "react";
 import Matter from "matter-js";
 
-const CollisionFiltering: React.FC = () => {
+const PhysicsSimulation: React.FC = () => {
   const sceneRef = useRef<HTMLDivElement>(null);
+  const [mass1, setMass1] = useState<number>(5);
+  const [mass2, setMass2] = useState<number>(5);
+  const [velocity1, setVelocity1] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
+  const [velocity2, setVelocity2] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
+  const [engine, setEngine] = useState<Matter.Engine | null>(null);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [dragStart, setDragStart] = useState<Matter.Vector | null>(null);
+  const [currentBall, setCurrentBall] = useState<Matter.Body | null>(null);
+  const [forceLine, setForceLine] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
+  const ballsRef = useRef<{
+    ball1: Matter.Body | null;
+    ball2: Matter.Body | null;
+  }>({ ball1: null, ball2: null });
 
   useEffect(() => {
     if (!sceneRef.current) return;
 
-    try {
-      const {
-        Engine,
-        Render,
-        Runner,
-        Composite,
-        Composites,
-        Bodies,
-        Mouse,
-        MouseConstraint,
-      } = Matter;
+    const {
+      Engine,
+      Render,
+      Runner,
+      Composite,
+      Bodies,
+      Mouse,
+      MouseConstraint,
+    } = Matter;
+    const newEngine = Engine.create();
+    setEngine(newEngine);
 
-      const engine = Engine.create();
-      const world = engine.world;
+    const render = Render.create({
+      element: sceneRef.current,
+      engine: newEngine,
+      options: {
+        width: window.innerWidth,
+        height: window.innerHeight,
+        wireframes: false,
+        hasBounds: true,
+      },
+    });
 
-      const width = window.innerWidth;
-      const height = window.innerHeight;
+    // Mouse setup
+    const mouse = Mouse.create(render.canvas);
+    const mouseConstraint = MouseConstraint.create(newEngine, {
+      mouse,
+      constraint: { stiffness: 0.2, render: { visible: false } },
+    });
 
-      const render = Render.create({
-        element: sceneRef.current,
-        engine: engine,
-        options: {
-          width,
-          height,
-          wireframes: false,
-        },
-      });
-      Render.run(render);
+    Composite.add(newEngine.world, mouseConstraint);
+    render.mouse = mouse;
+    Render.run(render);
 
-      const runner = Runner.create();
-      Runner.run(runner, engine);
+    const runner = Runner.create();
+    Runner.run(runner, newEngine);
 
-      const defaultCategory = 0x0001;
-      const redCategory = 0x0002;
-      const greenCategory = 0x0004;
-      const blueCategory = 0x0008;
-
-      const colorA = "#f55a3c";
-      const colorB = "#063e7b";
-      const colorC = "#f5d259";
-
-      // Ground at bottom
-      Composite.add(
-        world,
-        Bodies.rectangle(width / 2, height - 25, width, 50, {
-          isStatic: true,
-          render: { fillStyle: "transparent", lineWidth: 1 },
-        })
-      );
-
-      // Centered stack of objects
-      const stackX = width / 2 - 100; // Adjusted to center the stack
-      const stackY = height / 2 - 150; // Placed in the center vertically
-
-      Composite.add(
-        world,
-        Composites.stack(stackX, stackY, 5, 9, 10, 10, (x, y, column, row) => {
-          let category = redCategory;
-          let color = colorA;
-
-          if (row > 5) {
-            category = blueCategory;
-            color = colorB;
-          } else if (row > 2) {
-            category = greenCategory;
-            color = colorC;
-          }
-
-          return Bodies.circle(x, y, 20, {
-            collisionFilter: { category },
-            render: {
-              strokeStyle: color,
-              fillStyle: "transparent",
-              lineWidth: 1,
-            },
-          });
-        })
-      );
-
-      // Balls falling into the center
-      Composite.add(
-        world,
-        Bodies.circle(width / 2 - 80, height / 2 - 200, 30, {
-          collisionFilter: { mask: defaultCategory | greenCategory },
-          render: { fillStyle: colorC },
-        })
-      );
-
-      Composite.add(
-        world,
-        Bodies.circle(width / 2, height / 2 - 200, 30, {
-          collisionFilter: { mask: defaultCategory | redCategory },
-          render: { fillStyle: colorA },
-        })
-      );
-
-      Composite.add(
-        world,
-        Bodies.circle(width / 2 + 80, height / 2 - 200, 30, {
-          collisionFilter: { mask: defaultCategory | blueCategory },
-          render: { fillStyle: colorB },
-        })
-      );
-
-      const mouse = Mouse.create(render.canvas);
-      const mouseConstraint = MouseConstraint.create(engine, {
-        mouse: mouse,
-        constraint: { stiffness: 0.2, render: { visible: false } },
-      });
-
-      Composite.add(world, mouseConstraint);
-      render.mouse = mouse;
-
-      mouseConstraint.collisionFilter.mask =
-        defaultCategory | blueCategory | greenCategory;
-
-      Render.lookAt(render, {
-        min: { x: 0, y: 0 },
-        max: { x: width, y: height },
-      });
-
-      // Resize event listener
-      const handleResize = () => {
-        const newWidth = window.innerWidth;
-        const newHeight = window.innerHeight;
-        render.canvas.width = newWidth;
-        render.canvas.height = newHeight;
-        Render.lookAt(render, {
-          min: { x: 0, y: 0 },
-          max: { x: newWidth, y: newHeight },
-        });
-      };
-
-      window.addEventListener("resize", handleResize);
-
-      return () => {
-        Render.stop(render);
-        Runner.stop(runner);
-        Engine.clear(engine);
-        render.canvas.remove();
-        window.removeEventListener("resize", handleResize);
-      };
-    } catch (error) {
-      console.error("An error occurred in the physics simulation:", error);
-    }
+    return () => {
+      Render.stop(render);
+      Runner.stop(runner);
+      Composite.clear(newEngine.world, false);
+      Engine.clear(newEngine);
+      render.canvas.remove();
+    };
   }, []);
 
-  return <div ref={sceneRef} style={{ width: "100vw", height: "100vh" }} />;
+  useEffect(() => {
+    if (engine) startSimulation();
+  }, [mass1, mass2]);
+
+  const startSimulation = () => {
+    if (!engine || !sceneRef.current) return;
+    const { Composite, Bodies, Body, Vector } = Matter;
+
+    Composite.clear(engine.world, false);
+
+    // Create balls with mass-dependent radius
+    const createBall = (x: number, y: number, mass: number, color: string) => {
+      const radius = 10 + mass * 3;
+      const ball = Bodies.circle(x, y, radius, {
+        mass,
+        restitution: 0.2,
+        gravity: 1,
+        render: { fillStyle: color },
+      });
+      Body.setVelocity(ball, Vector.create(0, 0));
+      return ball;
+    };
+
+    const ball1 = createBall(
+      window.innerWidth / 2 - 100,
+      200,
+      mass1,
+      "#FF6B6B"
+    );
+    const ball2 = createBall(
+      window.innerWidth / 2 + 100,
+      200,
+      mass2,
+      "#4ECDC4"
+    );
+    ballsRef.current = { ball1, ball2 };
+
+    // Walls
+    const walls = [
+      Bodies.rectangle(
+        window.innerWidth / 2,
+        window.innerHeight,
+        window.innerWidth,
+        50,
+        { isStatic: true }
+      ),
+      Bodies.rectangle(window.innerWidth / 2, 0, window.innerWidth, 50, {
+        isStatic: true,
+      }),
+      Bodies.rectangle(0, window.innerHeight / 2, 50, window.innerHeight, {
+        isStatic: true,
+      }),
+      Bodies.rectangle(
+        window.innerWidth,
+        window.innerHeight / 2,
+        50,
+        window.innerHeight,
+        { isStatic: true }
+      ),
+    ];
+
+    Composite.add(engine.world, [...walls, ball1, ball2]);
+
+    // Collision handling
+    // Matter.Events.on(engine, "collisionStart", (event) => {
+    //   event.pairs.forEach(({ bodyA, bodyB }) => {
+    //     if ([bodyA, bodyB].includes(ball1)) Body.scale(ball1, 1.1, 1.1);
+    //     if ([bodyA, bodyB].includes(ball2)) Body.scale(ball2, 1.1, 1.1);
+    //   });
+    // });
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (ballsRef.current.ball1) setVelocity1(ballsRef.current.ball1.velocity);
+      if (ballsRef.current.ball2) setVelocity2(ballsRef.current.ball2.velocity);
+    }, 50);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!engine) return;
+    const { ball1, ball2 } = ballsRef.current;
+    const mousePosition = {
+      x: e.nativeEvent.offsetX,
+      y: e.nativeEvent.offsetY,
+    };
+
+    const clickedBall = [ball1, ball2].find(
+      (ball) => ball && Matter.Bounds.contains(ball.bounds, mousePosition)
+    );
+
+    if (clickedBall) {
+      setCurrentBall(clickedBall);
+      setDragStart(mousePosition);
+      setIsDragging(true);
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isDragging && currentBall && dragStart) {
+      const mousePosition = {
+        x: e.nativeEvent.offsetX,
+        y: e.nativeEvent.offsetY,
+      };
+      setForceLine(mousePosition);
+    }
+  };
+
+  const handleMouseUp = () => {
+    if (isDragging && currentBall && dragStart) {
+      const force = Matter.Vector.sub(dragStart, forceLine);
+      Matter.Body.applyForce(
+        currentBall,
+        currentBall.position,
+        Matter.Vector.div(force, -1000)
+      );
+      setIsDragging(false);
+      setDragStart(null);
+    }
+  };
+
+  return (
+    <div className="relative h-screen w-full">
+      <div className="absolute top-4 left-4 bg-white p-4 rounded-lg shadow-lg z-10">
+        <div className="mb-4">
+          <label className="block mb-2">
+            Ball 1 Mass: {mass1}kg
+            <input
+              type="range"
+              min="1"
+              max="20"
+              value={mass1}
+              onChange={(e) => setMass1(Number(e.target.value))}
+              className="w-full mt-1"
+            />
+          </label>
+          <label className="block">
+            Ball 2 Mass: {mass2}kg
+            <input
+              type="range"
+              min="1"
+              max="20"
+              value={mass2}
+              onChange={(e) => setMass2(Number(e.target.value))}
+              className="w-full mt-1"
+            />
+          </label>
+        </div>
+
+        <div className="space-y-2">
+          <p className="text-sm">
+            Ball 1 Velocity:
+            {velocity1.x.toFixed(1)}m/s, {velocity1.y.toFixed(1)}m/s
+          </p>
+          <p className="text-sm">
+            Ball 2 Velocity:
+            {velocity2.x.toFixed(1)}m/s, {velocity2.y.toFixed(1)}m/s
+          </p>
+        </div>
+      </div>
+
+      <div
+        ref={sceneRef}
+        className="h-full w-full"
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+      >
+        {isDragging && currentBall && (
+          <svg className="absolute top-0 left-0 w-full h-full pointer-events-none">
+            <line
+              x1={currentBall.position.x}
+              y1={currentBall.position.y}
+              x2={forceLine.x}
+              y2={forceLine.y}
+              stroke="rgba(0,0,0,0.5)"
+              strokeWidth="2"
+              strokeDasharray="5 5"
+            />
+          </svg>
+        )}
+      </div>
+    </div>
+  );
 };
 
-export default CollisionFiltering;
+export default PhysicsSimulation;
