@@ -95,7 +95,7 @@ const ProjectileSimulation: React.FC = () => {
           <input
             type="range"
             min="10"
-            max="100"
+            max="35"
             value={velocity}
             onChange={(e) => setVelocity(Number(e.target.value))}
             className="w-full mt-1"
