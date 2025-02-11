@@ -82,25 +82,17 @@ const Chat = () => {
 
   const router = useRouter();
 
-  const updateChat = async (chatId: string) => {
-    const { data: chat, error: fetchError } = await supabase
-      .from("chats")
-      .select("msgs")
-      .eq("id", chatId)
-      .single();
-  
-    if (fetchError) {
-      console.error("Error fetching chat:", fetchError);
-      return null;
-    }
-    
+  const updateChat = async (chatId: string) => {    
+    console.log("Updated chat:", responses);
+
     const { data, error } = await supabase
       .from("chats")
       .update({ msgs: responses })
       .eq("id", chatId)
-      .select()
+      .select('msgs')
       .single();
   
+
     if (error) {
       console.error("Error updating chat:", error);
       return null;
@@ -238,17 +230,14 @@ const Chat = () => {
   }, [dbUser, user]);
 
   useEffect(() => {
+    if (responses.length >= 2) updateChat(chatId);
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    }
-
-    if (isChatCreated && chatId != "") {
-      updateChat(chatId)
     }
   }, [responses]);
 
 
-  const handleSimulationClick = () => {
+  const handleSimulationClick = (simId: string) => {
     setShowSimulation(true);  // Set simulation view to true
   };
 
@@ -299,8 +288,9 @@ const Chat = () => {
                       {!chat.isUser && chat?.data && (
                           <div
                             className="flex w-fit flex-row items-center justify-center border border-foreground
-                            boreder text-background hover:bg-background hover:text-foreground hover:cursor-pointer transition-all duration-500 h-8 p-3 py-4 rounded-2xl"
-                            onClick={handleSimulationClick}  
+                            boreder text-background hover:bg-background hover:text-foreground hover:cursor-pointer 
+                            transition-all duration-500 h-8 p-3 py-5 rounded-2xl"
+                            onClick={() => handleSimulationClick(chat.data)}  
                           >
                             Launch a simulation: {getSimulationTitle(chat.data)}
                           </div>
