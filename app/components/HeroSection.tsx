@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import SloganRotator from "./SloganRotator";
+import SloganRotator from "@/app/components/SloganRotator";
 
 const HeroSection = () => {
   return (

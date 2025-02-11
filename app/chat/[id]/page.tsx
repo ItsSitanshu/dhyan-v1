@@ -24,7 +24,7 @@ import Orbitals from "@/app/simulations/Orbitals";  // Import Orbitals component
 import Sidebar from "@/app/components/Sidebar";
 import TT from "@/app/components/ToolTip";
 
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 type ButtonData = {
   [key: string]: {
@@ -64,11 +64,14 @@ const MAX_TOKENS = 500_000;
 const supabase = createClientComponentClient();
 
 const Chat = () => {
+  const { id: autoChatId } = useParams();
+  
   const [message, setMessage] = useState<string>("");
   const [responses, setResponses] = useState<Chat[]>([]);
   const [chatView, setChatView] = useState<boolean>(false);
+  
   const [isChatCreated, setIsChatCreated] = useState<boolean>(false);
-  const [chatId, setChatId] = useState<string>("");
+  const [chatId, setChatId] = useState<string>(autoChatId as string);
 
   const [pendingSAct, setPendingSAct] = useState<number>(0);
   const [sActData, setSActData] = useState<any>(false);
@@ -79,68 +82,6 @@ const Chat = () => {
 
   const router = useRouter();
 
-  const createChat = async (userId: string) => {
-    const { data: existingChat, error: fetchError } = await supabase
-      .from("chats")
-      .select("*")
-      .eq("user_id", userId)
-      .single();
-
-    if (fetchError && fetchError.code !== "PGRST116") {
-      console.error("Error checking existing chat:", fetchError);
-      return null;
-    }
-
-    const { data, error } = await supabase
-      .from("chats")
-      .insert([{ user_id: userId, msgs: responses }])
-      .select("*")
-      .single();
-  
-
-    if (!error) {
-      setIsChatCreated(true);
-      setChatId(data?.id);
-
-      return data;
-    }
-
-    console.error("Error creating chat:", error);
-    return null;
-  };
-
-  const addChatToUser = async (userId: string, chatId: string) => {
-    const { data: userData, error: fetchError } = await supabase
-      .from("users")
-      .select("chats")
-      .eq("id", userId)
-      .single();
-  
-    if (fetchError) {
-      console.error("Error fetching user chats:", fetchError);
-      return null;
-    }
-  
-    const updatedChats = Array.isArray(userData.chats) ? [...userData.chats, chatId] : [chatId];
-    
-    const { data, error } = await supabase
-      .from("users")
-      .update({ chats: updatedChats })
-      .eq("id", userId)
-      .select()
-      .single();
-  
-    if (error) {
-      console.error("Error updating user chats:", error);
-      return null;
-    }
-
-    router.push(`/chat/${chatId}`);
-  
-    return data;
-  };
-  
-  
   const updateChat = async (chatId: string) => {
     const { data: chat, error: fetchError } = await supabase
       .from("chats")
@@ -272,24 +213,39 @@ const Chat = () => {
   }, []);
 
   useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        if (responses.length == 0 && dbUser.id == user.id) {
+          const { data, error } = await supabase
+            .from("chats")
+            .select("*")
+            .eq("id", chatId)
+            .single();
+          
+
+          console.log(data);
+
+          if (!error) {
+            setResponses(data.msgs);
+          }
+        }
+      } catch (error: any) {  
+        console.error("Error fetching session:", error.message);
+      }
+    };
+    
+    if (dbUser && user) fetchContent();
+  }, [dbUser, user]);
+
+  useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    }
-
-    if (responses.length > 0 && !isChatCreated && user) {
-      createChat(user.id);
     }
 
     if (isChatCreated && chatId != "") {
       updateChat(chatId)
     }
   }, [responses]);
-
-  useEffect(() => {
-    if (isChatCreated && chatId != "") {
-      addChatToUser(user.id, chatId);
-    }
-  }, [isChatCreated])
 
 
   const handleSimulationClick = () => {

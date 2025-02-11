@@ -6,7 +6,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import VisualIcon from "@/app/assets/icons/types/1.svg";
 import AuditoryIcon from "@/app/assets/icons/types/2.svg";
 import KinestheticIcon from "@/app/assets/icons/types/3.svg";
-import LoadingScreen from "./LoadingScreen";
+import LoadingScreen from "@/app/components/LoadingScreen";
 
 const supabase = createClientComponentClient();
 
