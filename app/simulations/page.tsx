@@ -3,7 +3,7 @@ import FrictionSimulation from "./Friction";
 import Orbitals from "./Orbitals";
 
 const Simulation = () => {
-  return <Orbitals />;
+  return <CollisionFiltering />;
 };
 
 export default Simulation;
