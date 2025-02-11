@@ -87,9 +87,8 @@ const NewtonSecondLaw: React.FC = () => {
 
     Composite.clear(engine.world, false);
 
-    // Create balls with mass-dependent radius
     const createBall = (x: number, y: number, mass: number, color: string) => {
-      const radius = 10 + mass * 3;
+      const radius = 10 + mass * 4;
       const ball = Bodies.circle(x, y, radius, {
         mass,
         restitution: 0.2,

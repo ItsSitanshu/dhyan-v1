@@ -155,9 +155,9 @@ const FrictionSimulation: React.FC = () => {
       animate={{ scale: 1, opacity: 1 }}
       exit={{ scale: 0.5, opacity: 0 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      style={{ position: "relative", width: "100%", height: "100%" }}
+      style={{ width: "100%", height: "100%", overflow: "hidden", borderRadius: "3em" }}
+      ref={sceneRef}
     >
-      <div ref={sceneRef} style={{ width: "100%", height: "100%", overflow: "hidden", borderRadius: "3em" }}></div>
       <button
         onClick={resetSimulation}
         className="absolute top-[20px] right-[20px] p-[10px] font-md text-background font-bold bg-prim1 hover:bg-sec1 transition-all duration-300 hover:cursor-pointer rounded-md"
