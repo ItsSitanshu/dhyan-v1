@@ -1,12 +1,12 @@
-import CollisionFiltering from "./Collision";
+import CollisionFiltering from "./NewtonSecondLaw";
 import ProjectileMotion from "./ProjectileMotion";
 import FrictionSimulation from "./Friction";
 import Orbitals from "./Orbitals";
 
 const Simulation = () => {
   return(
-    // <CollisionFiltering />
-    <ProjectileMotion />
+    <CollisionFiltering />
+    // <ProjectileMotion />
     // <FrictionSimulation />
     // <Orbitals />
   );

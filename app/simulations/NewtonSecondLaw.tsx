@@ -1,8 +1,9 @@
 "use client";
 import React, { useRef, useEffect, useState } from "react";
 import Matter from "matter-js";
+import { motion } from "framer-motion";
 
-const PhysicsSimulation: React.FC = () => {
+const NewtonSecondLaw: React.FC = () => {
   const sceneRef = useRef<HTMLDivElement>(null);
   const [mass1, setMass1] = useState<number>(5);
   const [mass2, setMass2] = useState<number>(5);
@@ -92,7 +93,7 @@ const PhysicsSimulation: React.FC = () => {
       const ball = Bodies.circle(x, y, radius, {
         mass,
         restitution: 0.2,
-        gravity: 1,
+        frictionAir: 0,
         render: { fillStyle: color },
       });
       Body.setVelocity(ball, Vector.create(0, 0));
@@ -199,7 +200,14 @@ const PhysicsSimulation: React.FC = () => {
   };
 
   return (
-    <div className="relative h-screen w-full">
+    <motion.div
+      initial={{ scale: 0.5, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      exit={{ scale: 0.5, opacity: 0 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      style={{ position: "relative", width: "100%", height: "100%" }}
+    >
+    <div>
       <div className="absolute top-4 left-4 bg-white p-4 rounded-lg shadow-lg z-10">
         <div className="mb-4">
           <label className="block mb-2">
@@ -260,7 +268,8 @@ const PhysicsSimulation: React.FC = () => {
         )}
       </div>
     </div>
+    </motion.div>
   );
 };
 
-export default PhysicsSimulation;
+export default NewtonSecondLaw;

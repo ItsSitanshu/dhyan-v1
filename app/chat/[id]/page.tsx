@@ -19,6 +19,9 @@ import TT from "@/app/components/ToolTip";
 
 import Orbitals from "@/app/simulations/Orbitals";
 import FrictionSimulation from "@/app/simulations/Friction";
+import NewtonSecondLaw from "@/app/simulations/NewtonSecondLaw";
+import ProjectileSimulation from "@/app/simulations/ProjectileMotion";
+
 
 import { useParams, useRouter } from "next/navigation";
 
@@ -30,8 +33,8 @@ type Chat = {
 };
 
 const simulationComponents: Record<string, React.FC> = {
-  newtons_laws_simulation: FrictionSimulation,
-  projectile_motion_simulation: FrictionSimulation,
+  newtons_laws_simulation: NewtonSecondLaw,
+  projectile_motion_simulation: ProjectileSimulation,
   friction_simulation: FrictionSimulation,
   electric_circuit_simulation: FrictionSimulation,
   gravity_orbit_simulation: Orbitals,
