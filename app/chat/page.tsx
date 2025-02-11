@@ -120,7 +120,9 @@ const Chat = () => {
       console.error("Error fetching user chats:", fetchError);
       return null;
     }
-  
+    
+    await updateChat(chatId);
+
     const updatedChats = Array.isArray(userData.chats) ? [...userData.chats, chatId] : [chatId];
     
     const { data, error } = await supabase
@@ -286,10 +288,10 @@ const Chat = () => {
   }, [responses]);
 
   useEffect(() => {
-    if (isChatCreated && chatId != "") {
+    if (isChatCreated && chatId != "" && responses.length >= 2) {
       addChatToUser(user.id, chatId);
     }
-  }, [isChatCreated])
+  })
 
 
   const handleSimulationClick = () => {
@@ -362,7 +364,7 @@ const Chat = () => {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   onKeyDown={(e) => {
-                    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+                    if (e.key === "Enter") {
                       e.preventDefault(); 
                       handleResponse();
                     }

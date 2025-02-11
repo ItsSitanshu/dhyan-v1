@@ -318,7 +318,7 @@ const Chat = () => {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   onKeyDown={(e) => {
-                    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+                    if (e.key === "Enter") {
                       e.preventDefault(); 
                       handleResponse();
                     }
