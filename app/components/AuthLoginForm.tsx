@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -10,7 +10,7 @@ const AuthLoginForm: FC = () => {
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  
+
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -19,17 +19,19 @@ const AuthLoginForm: FC = () => {
     setError(null);
     setSuccess(null);
 
-    try {      
+    try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email: email,
         password: password,
       });
-      
+
       if (error) {
-        setError((error.message).charAt(0).toUpperCase() + (error.message).slice(1));
+        setError(
+          error.message.charAt(0).toUpperCase() + error.message.slice(1)
+        );
       } else if (data.user) {
         setSuccess("Sign in successful!");
-        router.push('/chat');
+        router.push("/chat");
       }
     } catch (err: any) {
       console.error(err);
@@ -64,7 +66,8 @@ const AuthLoginForm: FC = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
             <span className=" text-xs text-foreground/35 ml-1 mt-2">
-              Must be at least 8 characters long, with a number and a special character.
+              Must be at least 8 characters long, with a number and a special
+              character.
             </span>
           </div>
         </div>
@@ -89,7 +92,11 @@ const AuthLoginForm: FC = () => {
 
       <p className="text-foreground/[.5]  text-xs text-thin mt-4">
         Don't have an account?{" "}
-        <Link href='/auth/register'><span className="font-bold text-[0.9rem] underline text-foreground" >Register</span></Link>
+        <Link href="/auth/register">
+          <span className="font-bold text-[0.9rem] underline text-foreground">
+            Register
+          </span>
+        </Link>
       </p>
     </div>
   );

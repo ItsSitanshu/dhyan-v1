@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Link from "next/link";
 
 const supabase = createClientComponentClient();
@@ -38,7 +38,9 @@ const AuthForm: FC = () => {
       if (error) {
         setError(error.message);
       } else if (data.user) {
-        setSuccess("Sign up successful! Please check your email for confirmation.");
+        setSuccess(
+          "Sign up successful! Please check your email for confirmation."
+        );
       }
     } catch (err: any) {
       console.error(err);
@@ -69,7 +71,7 @@ const AuthForm: FC = () => {
             <span className="font-nue text-[0.7rem] ml-1">Last Name</span>
             <input
               type="text"
-              placeholder="e.g. B. Aacharya"
+              placeholder="e.g. B. Acharya"
               className="bg-bgsec h-full text-white text-sm rounded-lg pl-2 m-0 w-full focus:outline-none focus:border focus:border-foreground/40"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
@@ -101,7 +103,8 @@ const AuthForm: FC = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
             <span className=" text-[0.7rem] text-foreground/35 ml-1 mt-2">
-              Must be at least 8 characters long, with a number and a special character.
+              Must be at least 8 characters long, with a number and a special
+              character.
             </span>
           </div>
         </div>
@@ -126,8 +129,10 @@ const AuthForm: FC = () => {
 
       <p className="text-foreground/[.5]  text-xs text-thin mt-4">
         Already have an account?{" "}
-        <Link href='/auth/login'>
-          <span className="font-bold underline text-[0.9rem] text-foreground">Login</span>
+        <Link href="/auth/login">
+          <span className="font-bold underline text-[0.9rem] text-foreground">
+            Login
+          </span>
         </Link>
       </p>
     </div>
