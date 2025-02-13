@@ -7,7 +7,7 @@ const FeatureSection = () => {
         (text, index) => (
           <button
             key={index}
-            className="bg-prim1 text-white px-4 py-2 rounded-full hover:scale-105 transition-transform duration-200"
+            className="bg-prim2 text-white px-4 py-2 rounded-full hover:scale-105 transition-transform duration-200"
           >
             {text}
           </button>
