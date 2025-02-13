@@ -6,17 +6,11 @@ import React, { useState, useEffect, useRef } from "react";
 
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
-import brainLogo from "@/app/assets/icons/brain.svg";
-import notepadLogo from "@/app/assets/icons/notepad.svg";
-import questionLogo from "@/app/assets/icons/question.svg";
-import tipLogo from "@/app/assets/icons/tip.svg";
 import arrowLogo from "@/app/assets/icons/arrow.svg";
 import documentLogo from "@/app/assets/icons/document.svg";
-import hintLogo from "@/app/assets/icons/bulb.svg";
 
 import { APITitle, APITutor, getTokenCount, trimToMaxTokens, getSimulationTitle } from "@/app/lib";
 
-import SloganRotator from "@/app/components/SloganRotator";
 import NotSignedPopup from "@/app/components/NotSignedPopup";
 import InitialForm from "@/app/components/InitialForm";
 import LoadingScreen from "@/app/components/LoadingScreen";
@@ -33,8 +27,7 @@ type Chat = {
   data?: any;
 };
 
-const MAX_TOKENS = 500_000;
-
+const MAX_TOKENS = (250_000 / 4);
 const supabase = createClientComponentClient();
 
 const Chat = () => {
@@ -47,6 +40,10 @@ const Chat = () => {
 
   const [showSimulation, setShowSimulation] = useState(false); 
   const [isTyping, setIsTyping] = useState<boolean>(false);
+
+  const [editingChatId, setEditingChatId] = useState(null);
+  const [newTitle, setNewTitle] = useState<string>("");
+
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
 
   const router = useRouter();
@@ -305,7 +302,7 @@ const Chat = () => {
         }
   
         if (data) {
-          setChats(data.flatMap(chat => chat.msgs));
+          setChats(data);
           console.log(data);
 
         }
@@ -315,14 +312,54 @@ const Chat = () => {
     };
   
     fetchChats();
-
   }, [user]);
+
+  const startEditing = (chat: any) => {
+    setEditingChatId(chat.id);
+    setNewTitle(chat.title || "Untitled Chat");
+  };
+
+  const handleRename = (chatId: string) => {
+    if (newTitle.trim() !== "") {
+      renameChat(chatId);
+    }
+    setEditingChatId(null);
+  };
+
+  const deleteChat = async (chatId: string) => {
+    const { error } = await supabase.from("chats").delete().eq("id", chatId);
+    if (error) {
+      console.error("Error deleting chat:", error);
+    } else {
+      setChats(chats.filter((chat: any) => chat.id !== chatId));
+    }
+  };
+
+  const renameChat = async (chatId: string) => {
+    if (!newTitle.trim()) return;
+
+    const { error } = await supabase
+      .from("chats")
+      .update({ title: newTitle })
+      .eq("id", chatId);
+
+    if (error) {
+      console.error("Error renaming chat:", error);
+    } else {
+      setChats(
+        chats.map((chat: any) =>
+          chat.id === chatId ? { ...chat, title: newTitle } : chat
+        )
+      );
+      setNewTitle("");
+    }
+  };
 
   useEffect(() => {
     if (!isChatCreated || chatId == "" || responses.length < 2) return;
     
     addChatToUser(user.id, chatId);
-  }, [isChatCreated])
+  })
 
   const handleSimulationClick = () => {
     setShowSimulation(true); 
@@ -343,13 +380,64 @@ const Chat = () => {
                   className="flex flex-col w-4/6 p-9 h-5/6 overflow-y-auto"
                   ref={chatContainerRef}  
                   style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                >
+                > 
+                  {responses.length == 0 &&
+                    <div className="flex items-center w-full h-full">
+                      <div className="flex flex-col bg-lprim w-3/4 h-1/2 rounded-3xl overflow-y-auto">
+                      {chats.map((chat: any) => (
+                        <div
+                          key={chat.id}
+                          className="p-4 text-background shadow-lg rounded-lg transition duration-200 hover:shadow-xl"
+                        >
+                          <div 
+                            className="flex justify-between items-center"
+                            onDoubleClick={() => {
+                              setEditingChatId((prev) => prev ? null : chat.id);
+                              setNewTitle(chat.title);
+                            }}
+                          >
+                            {editingChatId === chat.id ? (
+                              <input
+                                autoFocus
+                                type="text"
+                                className="w-full text-lg font-semibold text-background bg-transparent cursor-pointer focus:outline-none"
+                                value={newTitle}
+                                onChange={(e) => setNewTitle(e.target.value)}
+                                onBlur={() => handleRename(chat.id)}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") handleRename(chat.id);
+                                  if (e.key === "Escape") setEditingChatId(null);
+                                }}
+                              />
+                            ) : (
+                              <h2
+                                className="text-lg font-semibold cursor-pointer hover:underline"
+                                onDoubleClick={() => startEditing(chat)}
+                                onClick={() => router.push(`/chat/${chat.id}`)}
+                              >
+                                {chat.title || "Untitled Chat"}
+                              </h2>
+                            )}
+
+                            <div className="flex gap-2">
+                              <button
+                                className="bg-red-500 text-white px-3 py-1 rounded-md text-sm transition hover:bg-red-600"
+                                onClick={() => deleteChat(chat.id)}
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      </div>
+                    </div>
+                  }
                   {responses.map((chat, index) => (
                     <div
                       key={index}
                       className={`flex ${chat?.data && 'flex-col'} ${chat.isUser ? "justify-end" : "justify-start"}`}
                     >
-  
                       <div                    
                         className={`relative px-3 py-3 font-normal rounded-2xl my-2 max-w-[85%] ${!chat.isUser ? 'bg-foreground' : ''} bg-opacity-20 z-50`}
                       >

@@ -44,7 +44,7 @@ const simulationComponents: Record<string, React.FC> = {
   dna_replication_visualizer: FrictionSimulation,
 };
 
-const MAX_TOKENS = 500_000;
+const MAX_TOKENS = (250_000 / 4);
 const supabase = createClientComponentClient();
 
 const ChatWithId = () => {
@@ -255,6 +255,8 @@ const ChatWithId = () => {
   
 
   const handleSimulationClick = (simId: string) => {
+    console.log("sim query: ", simId);
+
     setSimulationId(simId);
     setShowSimulation(true);
   };
@@ -300,44 +302,44 @@ const ChatWithId = () => {
                     <h2 className="text-3xl mt-1 font-nue text-background">Dhyan.AI</h2>
                   </div>
                 </div>
-                <div className="flex flex-col h-full justify-start">
-                {responses.map((chat, index) => (
-                  <div
-                    key={index}
-                    className={`flex  ${chat?.data && 'flex-col'} ${chat.isUser ? "justify-end" : "justify-start"}`}
-                  >
+                <div className="flex flex-col h-max-[90%] justify-start">
+                  {responses.map((chat, index) => (
                     <div
-                      className={`relative px-3 py-3 font-normal rounded-2xl my-2 max-w-[85%] ${!chat.isUser ? 'bg-foreground' : ''} bg-opacity-20 z-50`}
+                      key={index}
+                      className={`flex  ${chat?.data && 'flex-col'} ${chat.isUser ? "justify-end" : "justify-start"}`}
                     >
-                      {chat.isUser && (
-                        <div className="absolute z-[-1] inset-0 rounded-2xl opacity-10" style={{ background: 'linear-gradient(180deg, var(--prim1) 0%, var(--sec1) 30%, var(--prim2) 100%, var(--sec2) 200%)' }}></div>
-                      )}
-                      <ReactMarkdown
-                        components={{
-                          h1: ({ node, ...props }) => <h1 className="text-4xl font-bold" {...props} />,
-                          h2: ({ node, ...props }) => <h2 className="text-3xl font-semibold" {...props} />,
-                          p: ({ node, ...props }) => <p className="leading-relaxed text-background" {...props} />,
-                          a: ({ node, ...props }) => <a className="text-blue-600" {...props} />,
-                          ul: ({ node, ...props }) => <ul className="list-disc pl-5 space-y-2" {...props} />,
-                          ol: ({ node, ...props }) => <ol className="list-decimal pl-5 space-y-2" {...props} />,
-                          li: ({ node, ...props }) => <li className="text-background" {...props} />,
-                          blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-gray-500 pl-4 italic text-gray-600" {...props} />,
-                        }}
+                      <div
+                        className={`relative px-3 py-3 font-normal rounded-2xl my-2 max-w-[85%] ${!chat.isUser ? 'bg-foreground' : ''} bg-opacity-20 z-50`}
                       >
-                        {chat.message}
-                      </ReactMarkdown>
+                        {chat.isUser && (
+                          <div className="absolute z-[-1] inset-0 rounded-2xl opacity-10" style={{ background: 'linear-gradient(180deg, var(--prim1) 0%, var(--sec1) 30%, var(--prim2) 100%, var(--sec2) 200%)' }}></div>
+                        )}
+                        <ReactMarkdown
+                          components={{
+                            h1: ({ node, ...props }) => <h1 className="text-4xl font-bold" {...props} />,
+                            h2: ({ node, ...props }) => <h2 className="text-3xl font-semibold" {...props} />,
+                            p: ({ node, ...props }) => <p className="leading-relaxed text-background" {...props} />,
+                            a: ({ node, ...props }) => <a className="text-blue-600" {...props} />,
+                            ul: ({ node, ...props }) => <ul className="list-disc pl-5 space-y-2" {...props} />,
+                            ol: ({ node, ...props }) => <ol className="list-decimal pl-5 space-y-2" {...props} />,
+                            li: ({ node, ...props }) => <li className="text-background" {...props} />,
+                            blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-gray-500 pl-4 italic text-gray-600" {...props} />,
+                          }}
+                        >
+                          {chat.message}
+                        </ReactMarkdown>
+                      </div>
                     </div>
-                  </div>
-                ))}
-                {isTyping && (
-                  <div
-                    className={`flex justify-start`}
-                  >
-                    <div className="relative px-3 py-3 font-normal rounded-2xl my-2 max-w-[85%] bg-foreground bg-opacity-20 z-50">
-                      <span className="typing-dots">Typing</span>
+                  ))}
+                  {isTyping && (
+                    <div
+                      className={`flex justify-start`}
+                    >
+                      <div className="relative px-3 py-3 font-normal rounded-2xl my-2 max-w-[85%] bg-foreground bg-opacity-20 z-50">
+                        <span className="typing-dots text-background">Typing</span>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
                 </div>
                 <div
                   className="flex flex-row items-center justify-center space-x-4 rounded-xl w-full h-12 relative"
@@ -444,6 +446,15 @@ const ChatWithId = () => {
                       )}
                     </div>
                   ))}
+                  {isTyping && (
+                    <div
+                      className={`flex justify-start`}
+                    >
+                      <div className="relative px-3 py-3 font-normal rounded-2xl my-2 max-w-[85%] bg-foreground bg-opacity-20 z-50">
+                        <span className="typing-dots text-background">Typing</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div
                   className="flex flex-row items-center justify-center space-x-4 rounded-xl w-3/4 h-12 relative"
