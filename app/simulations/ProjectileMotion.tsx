@@ -108,7 +108,7 @@ const ProjectileSimulation: React.FC = () => {
     const vy = -velocity * Math.sin(radianAngle);
 
     const radius = 10 + mass * 2;
-    const projectile = Bodies.circle(100, window.innerHeight - 100, radius, {
+    const projectile = Bodies.circle(0, window.innerHeight - 20, radius, {
       restitution: 0.6,
       friction: 0.05,
       mass: mass,
@@ -207,23 +207,12 @@ const ProjectileSimulation: React.FC = () => {
           <input
             type="range"
             min="10"
-            max="50"
+            max="25"
             value={velocity}
             onChange={(e) => setVelocity(Number(e.target.value))}
             className="w-full mt-1"
           />
-        </label>
-        <label className="block mb-2">
-          Mass: {mass} kg
-          <input
-            type="range"
-            min="1"
-            max="20"
-            value={mass}
-            onChange={(e) => setMass(Number(e.target.value))}
-            className="w-full mt-1"
-          />
-        </label>
+        </label>  
         <button
           onClick={launchProjectile}
           className="w-full bg-lsec text-foreground hover:bg-bgsec font-bold px-4 py-2 rounded-lg mt-2"

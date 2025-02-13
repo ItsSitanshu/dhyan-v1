@@ -14,7 +14,7 @@ import arrowLogo from "@/app/assets/icons/arrow.svg";
 import documentLogo from "@/app/assets/icons/document.svg";
 import hintLogo from "@/app/assets/icons/bulb.svg";
 
-import { tutor, getTokenCount, trimToMaxTokens, getSimulationTitle } from "@/app/lib";
+import { APITitle, APITutor, getTokenCount, trimToMaxTokens, getSimulationTitle } from "@/app/lib";
 
 import SloganRotator from "@/app/components/SloganRotator";
 import NotSignedPopup from "@/app/components/NotSignedPopup";
@@ -96,7 +96,7 @@ const Chat = () => {
       .insert([{ user_id: userId, msgs: responses }])
       .select("*")
       .single();
-  
+    
 
     if (!error) {
       setIsChatCreated(true);
@@ -137,11 +137,37 @@ const Chat = () => {
       return null;
     }
 
-    router.push(`/chat/${chatId}`);
+    router.replace(`/chat/${chatId}`, undefined);
   
     return data;
   };
   
+  const generateTitle = async (chatId: string) => {
+    if (responses.length != 6) return;
+
+    let conversationContext = responses.map((chat) => {
+      return `${chat.isUser ? 'User' : 'Assistant'}: ${chat.message}\n`;
+    }).join('\n');
+
+    const tokenCount = getTokenCount(conversationContext);
+
+    if (tokenCount > MAX_TOKENS) {
+      conversationContext = trimToMaxTokens(conversationContext, MAX_TOKENS);
+    }
+
+    const request = await APITitle(conversationContext);
+
+    if (request.code != 200) return;
+
+    const { error: updateError } = await supabase
+      .from('chats')
+      .update({ title: request.response })
+      .eq('id', chatId);
+
+    if (updateError) {
+      console.error('Error updating title:', updateError);
+    }
+  };
   
   const updateChat = async (chatId: string) => {
     const { data: chat, error: fetchError } = await supabase
@@ -166,7 +192,9 @@ const Chat = () => {
       console.error("Error updating chat:", error);
       return null;
     }
-  
+    
+    await generateTitle(chatId);
+
     return data;
   };
 
@@ -190,7 +218,7 @@ const Chat = () => {
         conversationContext = trimToMaxTokens(conversationContext, MAX_TOKENS);
       }
 
-      const response = await tutor(message, conversationContext);
+      const response = await APITutor({}, message, conversationContext);
 
       if (response.code === 200) {
         setResponses([
@@ -299,8 +327,8 @@ const Chat = () => {
   };
 
   return (
+    !(user && dbUser) ? <LoadingScreen/> :
     user ? (
-      
       dbUser ? (
         <div className="h-screen bg-lprim flex items-center p-4">
           <Sidebar currentPage="chat"/>

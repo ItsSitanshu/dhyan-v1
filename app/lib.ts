@@ -1,8 +1,9 @@
 import axios from 'axios';
 
-const tutor = async (query: string, history: string) => {
+const APITutor = async (details: any, query: string, history: string) => {
   try {
     const response = await axios.post('http://localhost:5000/api/tutor', {
+      details: details,
       history: history,
       query: query,
       feedback_metrics: {}
@@ -14,7 +15,7 @@ const tutor = async (query: string, history: string) => {
   }
 };
 
-const feedback = async (model_extraction: any, stars: any) => {
+const APIfeedback = async (model_extraction: any, stars: any) => {
   try {
     const response = await axios.post('http://localhost:5000/api/feedback', {
       stars: stars,
@@ -27,7 +28,20 @@ const feedback = async (model_extraction: any, stars: any) => {
   }
 }
 
-const extract = async (prev_response: any) => {
+const APITitle = async (history: any) => {
+  try {
+    const response = await axios.post('http://localhost:5000/api/title', {
+      history
+    });
+
+    return response.data;
+  } catch (error) {
+    return { "error" : error }
+  }
+}
+
+
+const APIExtract = async (prev_response: any) => {
   try {
     const response = await axios.post('http://localhost:5000/api/extract', {
       prev_response: prev_response,
@@ -65,4 +79,4 @@ const getSimulationTitle = (simId: string) => {
   return simulationTitles[simId] || "Unknown Simulation";
 };
 
-export { tutor, feedback, extract, getTokenCount, trimToMaxTokens, getSimulationTitle };
+export { APITutor, APITitle, APIfeedback, APIExtract, getTokenCount, trimToMaxTokens, getSimulationTitle };

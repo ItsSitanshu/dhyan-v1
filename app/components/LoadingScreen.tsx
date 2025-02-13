@@ -35,13 +35,14 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ status }) => {
   }, [status]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen w-screen bg-background text-foreground">
+    <div className="flex flex-col items-center justify-center h-screen w-screen bg-bgsec text-background">
       <div className="atom">
         <div className="line line-1"></div>
         <div className="line line-2"></div>
         <div className="line line-3"></div>
       </div>
-      <p className="text-lg w-[72%] font-medium">{currentStatus}</p>
+      <p className="w-[72%]"></p>
+      <p className="text-xl  font-medium">{currentStatus}</p>
     </div>
   );
 };

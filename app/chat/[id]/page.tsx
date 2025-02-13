@@ -5,7 +5,7 @@ import ReactMarkdown from "react-markdown";
 import React, { useState, useEffect, useRef } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { motion, AnimatePresence } from "framer-motion";
-import { tutor, getTokenCount, trimToMaxTokens, getSimulationTitle } from "@/app/lib";
+import { APITutor, APITitle, getTokenCount, trimToMaxTokens, getSimulationTitle } from "@/app/lib";
 
 import arrowLogo from "@/app/assets/icons/arrow.svg";
 import documentLogo from "@/app/assets/icons/document.svg";
@@ -62,20 +62,58 @@ const Chat = () => {
   const smallMsgRef = useRef<any>(null);
   const router = useRouter();
 
-  const updateChat = async (chatId: string) => {
-    console.log("Updated chat:", responses);
+  const generateTitle = async (chatId: string) => {
+    if (responses.length != 6) return;
 
+    let conversationContext = responses.map((chat) => {
+      return `${chat.isUser ? 'User' : 'Assistant'}: ${chat.message}\n`;
+    }).join('\n');
+
+    const tokenCount = getTokenCount(conversationContext);
+
+    if (tokenCount > MAX_TOKENS) {
+      conversationContext = trimToMaxTokens(conversationContext, MAX_TOKENS);
+    }
+
+    const request = await APITitle(conversationContext);
+
+    if (request.code != 200) return;
+
+    const { error: updateError } = await supabase
+      .from('chats')
+      .update({ title: request.response })
+      .eq('id', chatId);
+
+    if (updateError) {
+      console.error('Error updating title:', updateError);
+    }
+  };
+
+  const updateChat = async (chatId: string) => {
+    const { data: chat, error: fetchError } = await supabase
+      .from("chats")
+      .select("msgs")
+      .eq("id", chatId)
+      .single();
+  
+    if (fetchError) {
+      console.error("Error fetching chat:", fetchError);
+      return null;
+    }
+    
     const { data, error } = await supabase
       .from("chats")
       .update({ msgs: responses })
       .eq("id", chatId)
-      .select('msgs')
+      .select()
       .single();
-
+  
     if (error) {
       console.error("Error updating chat:", error);
       return null;
     }
+    
+    await generateTitle(chatId);
 
     return data;
   };
@@ -100,7 +138,7 @@ const Chat = () => {
         conversationContext = trimToMaxTokens(conversationContext, MAX_TOKENS);
       }
 
-      const response = await tutor(message, conversationContext);
+      const response = await APITutor({}, message, conversationContext);
 
       if (response.code === 200) {
         setResponses([
@@ -191,6 +229,8 @@ const Chat = () => {
 
           if (!error) {
             setResponses(data.msgs);
+          } else {
+            router.push('/chat/');
           }
         }
       } catch (error: any) {
@@ -216,6 +256,7 @@ const Chat = () => {
   const SimulationComponent = simulationId ? simulationComponents[simulationId] : null;
 
   return (
+    !(user && dbUser) ? <LoadingScreen/> :
     user ? (
       dbUser ? (
         <div className="h-screen bg-lprim flex flex-row gap-2 items-center p-4 overflow-hidden"
@@ -253,10 +294,11 @@ const Chat = () => {
                     <h2 className="text-3xl mt-1 font-nue text-background">Dhyan.AI</h2>
                   </div>
                 </div>
+                <div className="flex flex-col h-full justify-start">
                 {responses.map((chat, index) => (
                   <div
                     key={index}
-                    className={`flex ${chat?.data && 'flex-col'} ${chat.isUser ? "justify-end" : "justify-start"}`}
+                    className={`flex  ${chat?.data && 'flex-col'} ${chat.isUser ? "justify-end" : "justify-start"}`}
                   >
                     <div
                       className={`relative px-3 py-3 font-normal rounded-2xl my-2 max-w-[85%] ${!chat.isUser ? 'bg-foreground' : ''} bg-opacity-20 z-50`}
@@ -281,6 +323,7 @@ const Chat = () => {
                     </div>
                   </div>
                 ))}
+                </div>
                 <div
                   className="flex flex-row items-center justify-center space-x-4 rounded-xl w-full h-12 relative"
                 >
