@@ -4,6 +4,7 @@ import HeroSection from "@/app/components/HeroSection";
 import FeatureSection from "@/app/components/FeatureSection";
 import Example from "@/app/components/Example";
 import BoxGrid from "@/app/components/BoxGrid";
+import Methods from "./Methods";
 
 const LandingPage = () => {
   return (
@@ -15,6 +16,7 @@ const LandingPage = () => {
       <BoxGrid speed={140} direction="right" />
       <BoxGrid speed={140} direction="left" />
       <BoxGrid speed={140} direction="right" />
+      <Methods />
     </div>
   );
 };
