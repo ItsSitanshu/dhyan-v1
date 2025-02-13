@@ -14,7 +14,7 @@ const Header = () => {
           <a
             key={index}
             href="#"
-            className="relative text-foreground after:block after:content-[''] after:absolute after:h-[2px] after:bg-foreground after:w-0 after:left-0 after:bottom-[-2px] after:transition-all after:duration-300 hover:after:w-full"
+            className="relative text-white after:block after:content-[''] after:absolute after:h-[2px] after:bg-white after:w-0 after:left-0 after:bottom-[-2px] after:transition-all after:duration-300 hover:after:w-full"
           >
             {item}
           </a>
