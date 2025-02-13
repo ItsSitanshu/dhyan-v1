@@ -7,7 +7,7 @@ import BoxGrid from "@/app/components/BoxGrid";
 
 const LandingPage = () => {
   return (
-    <div className="bg-background text-foreground font-sans min-h-screen flex flex-col items-center overflow-hidden">
+    <div className="bg-foreground text-foreground font-sans min-h-screen flex flex-col items-center overflow-hidden">
       <Header />
       <HeroSection />
       <FeatureSection />
