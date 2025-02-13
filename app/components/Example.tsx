@@ -9,12 +9,10 @@ const Example = () => {
         <p>How do I expand and factorize (a + b)^3 correctly?</p>
       </div>
 
-      {/* Incorrect Expansion */}
       <pre className="bg-bgsec text-white p-4 rounded-lg overflow-x-auto">
         <code>{`(a + b)^3 = a^3 + b^3 + 3ab`}</code>
       </pre>
 
-      {/* AI's Response */}
       <div>
         <p className="text-lg font-semibold">DhyanAI</p>
         <p>
@@ -23,7 +21,6 @@ const Example = () => {
         </p>
       </div>
 
-      {/* Errors List */}
       <div>
         <p className="text-lg font-semibold">Errors in the Expansion:</p>
         <ul className="list-disc pl-6">
