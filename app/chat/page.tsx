@@ -306,6 +306,7 @@ const Chat = () => {
   
         if (data) {
           setChats(data.flatMap(chat => chat.msgs));
+          console.log(data);
         }
       } catch (error) {
         console.error("Error fetching chats:", error);
@@ -313,13 +314,14 @@ const Chat = () => {
     };
   
     fetchChats();
+
   }, [user]);
 
   useEffect(() => {
-    if (isChatCreated && chatId != "" && responses.length >= 2) {
-      addChatToUser(user.id, chatId);
-    }
-  })
+    if (!isChatCreated || chatId == "" || responses.length < 2) return;
+    
+    addChatToUser(user.id, chatId);
+  }, [isChatCreated])
 
   const handleSimulationClick = () => {
     setShowSimulation(true); 
@@ -341,7 +343,6 @@ const Chat = () => {
                   ref={chatContainerRef}  
                   style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 >
-                  {/* implement a list of scrollable */}
                   {responses.map((chat, index) => (
                     <div
                       key={index}
