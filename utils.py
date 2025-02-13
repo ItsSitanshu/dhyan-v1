@@ -63,3 +63,27 @@ def add_pdf_to_knowledge_base(pdf_path):
     sections = extract_text_from_pdf(pdf_path)
     add_to_knowledge_base(sections)
     print(f"Added {len(sections)} sections from {pdf_path} to the knowledge base.")
+
+
+def embed_text(text):
+    return embedding_model.encode(text).tolist()
+
+def extract_text_from_pdf(pdf_path):
+    doc = fitz.open(pdf_path)
+    text_sections = []
+    
+    for page in doc:
+        text = page.get_text("text")
+        if text.strip():
+            text_sections.append(text.strip())
+        else:  # Use OCR if no text is found
+            pix = page.get_pixmap()
+            ocr_text = pytesseract.image_to_string(img)
+            text_sections.append(ocr_text.strip())
+    
+    return text_sections
+
+def validate_filenames(supabase, filenames):
+    response = supabase.table("documents").select("filename").in_("filename", filenames).execute()
+    valid_files = {row["filename"] for row in response.data} if response.data else set()
+    return valid_files
