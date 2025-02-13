@@ -4,8 +4,8 @@ import FrictionSimulation from "./Friction";
 import Orbitals from "./Orbitals";
 
 const Simulation = () => {
-  return(
-    <CollisionFiltering />
+  return (
+    // <CollisionFiltering />
     // <ProjectileMotion />
     // <FrictionSimulation />
     // <Orbitals />

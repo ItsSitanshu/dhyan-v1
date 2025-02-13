@@ -206,67 +206,67 @@ const NewtonSecondLaw: React.FC = () => {
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
       style={{ position: "relative", width: "100%", height: "100%" }}
     >
-    <div>
-      <div className="absolute top-4 left-4 bg-white p-4 rounded-lg shadow-lg z-10">
-        <div className="mb-4">
-          <label className="block mb-2">
-            Ball 1 Mass: {mass1}kg
-            <input
-              type="range"
-              min="1"
-              max="20"
-              value={mass1}
-              onChange={(e) => setMass1(Number(e.target.value))}
-              className="w-full mt-1"
-            />
-          </label>
-          <label className="block">
-            Ball 2 Mass: {mass2}kg
-            <input
-              type="range"
-              min="1"
-              max="20"
-              value={mass2}
-              onChange={(e) => setMass2(Number(e.target.value))}
-              className="w-full mt-1"
-            />
-          </label>
+      <div>
+        <div className="absolute top-4 left-4 bg-white p-4 rounded-lg shadow-lg z-10">
+          <div className="mb-4">
+            <label className="block mb-2">
+              Ball 1 Mass: {mass1}kg
+              <input
+                type="range"
+                min="1"
+                max="20"
+                value={mass1}
+                onChange={(e) => setMass1(Number(e.target.value))}
+                className="w-full mt-1"
+              />
+            </label>
+            <label className="block">
+              Ball 2 Mass: {mass2}kg
+              <input
+                type="range"
+                min="1"
+                max="20"
+                value={mass2}
+                onChange={(e) => setMass2(Number(e.target.value))}
+                className="w-full mt-1"
+              />
+            </label>
+          </div>
+
+          <div className="space-y-2">
+            <p className="text-sm">
+              Ball 1 Velocity:
+              {velocity1.x.toFixed(1)}m/s, {velocity1.y.toFixed(1)}m/s
+            </p>
+            <p className="text-sm">
+              Ball 2 Velocity:
+              {velocity2.x.toFixed(1)}m/s, {velocity2.y.toFixed(1)}m/s
+            </p>
+          </div>
         </div>
 
-        <div className="space-y-2">
-          <p className="text-sm">
-            Ball 1 Velocity:
-            {velocity1.x.toFixed(1)}m/s, {velocity1.y.toFixed(1)}m/s
-          </p>
-          <p className="text-sm">
-            Ball 2 Velocity:
-            {velocity2.x.toFixed(1)}m/s, {velocity2.y.toFixed(1)}m/s
-          </p>
+        <div
+          ref={sceneRef}
+          className="h-full w-full"
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+        >
+          {isDragging && currentBall && (
+            <svg className="absolute top-0 left-0 w-full h-full pointer-events-none">
+              <line
+                x1={currentBall.position.x}
+                y1={currentBall.position.y}
+                x2={forceLine.x}
+                y2={forceLine.y}
+                stroke="rgba(0,0,0,0.5)"
+                strokeWidth="2"
+                strokeDasharray="5 5"
+              />
+            </svg>
+          )}
         </div>
-      </div>
-
-      <div
-        ref={sceneRef}
-        className="h-full w-full"
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-      >
-        {isDragging && currentBall && (
-          <svg className="absolute top-0 left-0 w-full h-full pointer-events-none">
-            <line
-              x1={currentBall.position.x}
-              y1={currentBall.position.y}
-              x2={forceLine.x}
-              y2={forceLine.y}
-              stroke="rgba(0,0,0,0.5)"
-              strokeWidth="2"
-              strokeDasharray="5 5"
-            />
-          </svg>
-        )}
-      </div>
-    </div>
+      </div>  
     </motion.div>
   );
 };
