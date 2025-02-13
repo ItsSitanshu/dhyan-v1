@@ -2,7 +2,7 @@ import React from "react";
 import Header from "@/app/components/Header";
 import HeroSection from "@/app/components/HeroSection";
 import FeatureSection from "@/app/components/FeatureSection";
-import CodeExample from "@/app/components/CodeExample";
+import Example from "@/app/components/Example";
 import BoxGrid from "@/app/components/BoxGrid";
 
 const LandingPage = () => {
@@ -11,7 +11,7 @@ const LandingPage = () => {
       <Header />
       <HeroSection />
       <FeatureSection />
-      <CodeExample />
+      <Example />
       <BoxGrid speed={140} direction="right" />
       <BoxGrid speed={140} direction="left" />
       <BoxGrid speed={140} direction="right" />
