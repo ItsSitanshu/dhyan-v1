@@ -47,20 +47,19 @@ const simulationComponents: Record<string, React.FC> = {
 const MAX_TOKENS = 500_000;
 const supabase = createClientComponentClient();
 
-const Chat = () => {
-  const { id: autoChatId } = useParams();
+const ChatWithId = () => {
+  const router = useRouter();
+
+  const { id: rawChatId } = useParams();
+
   const [message, setMessage] = useState<string>("");
   const [responses, setResponses] = useState<Chat[]>([]);
   const [chatView, setChatView] = useState<boolean>(false);
-  const [isChatCreated, setIsChatCreated] = useState<boolean>(false);
-  const [chatId, setChatId] = useState<string>(autoChatId as string);
-  const [pendingSAct, setPendingSAct] = useState<number>(0);
-  const [sActData, setSActData] = useState<any>(false);
+  const [isTyping, setIsTyping] = useState<boolean>(false);
+  const [chatId, setChatId] = useState<string>(rawChatId as string);
   const [showSimulation, setShowSimulation] = useState(false);
   const [simulationId, setSimulationId] = useState<string>("");
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
-  const smallMsgRef = useRef<any>(null);
-  const router = useRouter();
 
   const generateTitle = async (chatId: string) => {
     if (responses.length != 6) return;
@@ -120,9 +119,11 @@ const Chat = () => {
 
   const handleResponse = async () => {
     if (!message.trim()) return;
+    if (isTyping) return;
 
     const timestamp = Date.now();
     const newResponses = [...responses, { isUser: true, message, timestamp }];
+    setIsTyping(true);
     setResponses(newResponses);
     setMessage("");
     if (!chatView) setChatView(true);
@@ -157,15 +158,11 @@ const Chat = () => {
         specialAction = JSON.parse(fixedJson);
 
         if (specialAction.id === 1) {
-          setPendingSAct(1);
-          setSActData(specialAction.data);
           setResponses([
             ...newResponses,
             { isUser: false, message: response.response, timestamp: Date.now(), data: specialAction.data },
           ]);
         } else if (specialAction.id === 0) {
-          setPendingSAct(2);
-          setSActData(specialAction.data);
           setResponses([
             ...newResponses,
             { isUser: false, message: response.response, timestamp: Date.now(), data: specialAction.data },
@@ -174,6 +171,8 @@ const Chat = () => {
       }
     } catch (error) {
       console.error("Error fetching response:", error);
+    } finally {
+      setIsTyping(false);
     }
   };
 
@@ -219,34 +218,41 @@ const Chat = () => {
 
   useEffect(() => {
     const fetchContent = async () => {
-      try {
-        if (responses.length === 0 && dbUser.id === user.id) {
-          const { data, error } = await supabase
-            .from("chats")
-            .select("*")
-            .eq("id", chatId)
-            .single();
+      if (!dbUser || !user || responses.length > 0) return;
 
-          if (!error) {
-            setResponses(data.msgs);
-          } else {
-            router.push('/chat/');
-          }
+      try {
+        const { data, error } = await supabase
+          .from("chats")
+          .select("*")
+          .eq("id", chatId)
+          .single();
+
+        if (!error) {
+          setResponses(data.msgs);
+        } else {
+          router.push('/chat');
         }
       } catch (error: any) {
-        console.error("Error fetching session:", error.message);
+        console.error("Error fetching session:", error.message);  
       }
     };
 
-    if (dbUser && user) fetchContent();
-  }, [dbUser, user]);
+    fetchContent();
+  }, [dbUser, user, chatId]);
 
   useEffect(() => {
-    if (responses.length >= 2) updateChat(chatId);
+    if (responses.length >= 2) {
+      const lastTwo = responses.slice(-2);
+      if (lastTwo[0]?.isUser && !lastTwo[1]?.isUser) {
+        updateChat(chatId);
+      }
+    }
+    
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   }, [responses]);
+  
 
   const handleSimulationClick = (simId: string) => {
     setSimulationId(simId);
@@ -323,6 +329,15 @@ const Chat = () => {
                     </div>
                   </div>
                 ))}
+                {isTyping && (
+                  <div
+                    className={`flex justify-start`}
+                  >
+                    <div className="relative px-3 py-3 font-normal rounded-2xl my-2 max-w-[85%] bg-foreground bg-opacity-20 z-50">
+                      <span className="typing-dots">Typing</span>
+                    </div>
+                  </div>
+                )}
                 </div>
                 <div
                   className="flex flex-row items-center justify-center space-x-4 rounded-xl w-full h-12 relative"
@@ -365,7 +380,8 @@ const Chat = () => {
                         alt="->"
                         width={256}
                         height={256}
-                        className="p-1.5 w-10 h-10"
+                        className={`p-1.5 w-10 h-10 ${isTyping && 'cursor-not-allowed'}`}
+                        aria-disabled={isTyping}
                       />
                     </div>
                   </div>
@@ -470,7 +486,8 @@ const Chat = () => {
                         alt="->"
                         width={256}
                         height={256}
-                        className="p-1.5 w-10 h-10"
+                        className={`p-1.5 w-10 h-10 ${isTyping && 'cursor-not-allowed'}`}
+                        aria-disabled={isTyping}
                       />
                     </div>
                   </div>
@@ -488,4 +505,4 @@ const Chat = () => {
   );
 };
 
-export default Chat;
+export default ChatWithId;

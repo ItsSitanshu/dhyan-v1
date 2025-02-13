@@ -154,3 +154,15 @@ body {
     transform: rotateX(-80deg) rotateY(25deg) rotateZ(360deg);
   }
 }
+
+.typing-dots::after {
+  content: " .";
+  animation: dots 1.5s steps(4, end) infinite;
+}
+
+@keyframes dots {
+  0%, 100% { content: " ."; }
+  25%  { content: " .."; }
+  50%  { content: " ..."; }
+  75%  { content: " ...."; }
+}

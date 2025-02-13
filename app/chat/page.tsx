@@ -26,37 +26,11 @@ import TT from "@/app/components/ToolTip";
 
 import { useRouter } from "next/navigation";
 
-type ButtonData = {
-  [key: string]: {
-    label: string;
-    icon: string | any;
-  };
-};
-
 type Chat = {
   isUser: boolean;
   message: string;
   timestamp: number;
   data?: any;
-};
-
-const buttonData: ButtonData = {
-  explain_concept: {
-    label: "Explain",
-    icon: brainLogo,
-  },
-  summarize_notes: {
-    label: "Summarize",
-    icon: notepadLogo,
-  },
-  ask_question: {
-    label: "Ask a question",
-    icon: questionLogo,
-  },
-  study_tip: {
-    label: "Study Tip",
-    icon: tipLogo,
-  }
 };
 
 const MAX_TOKENS = 500_000;
@@ -66,16 +40,14 @@ const supabase = createClientComponentClient();
 const Chat = () => {
   const [message, setMessage] = useState<string>("");
   const [responses, setResponses] = useState<Chat[]>([]);
+  const [chats, setChats] = useState<any>([]);
   const [chatView, setChatView] = useState<boolean>(false);
   const [isChatCreated, setIsChatCreated] = useState<boolean>(false);
   const [chatId, setChatId] = useState<string>("");
 
-  const [pendingSAct, setPendingSAct] = useState<number>(0);
-  const [sActData, setSActData] = useState<any>(false);
-  
-  const [showSimulation, setShowSimulation] = useState(false); // New state for simulation view
+  const [showSimulation, setShowSimulation] = useState(false); 
+  const [isTyping, setIsTyping] = useState<boolean>(false);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
-  const smallMsgRef = useRef<any>(null);
 
   const router = useRouter();
 
@@ -99,9 +71,7 @@ const Chat = () => {
     
 
     if (!error) {
-      setIsChatCreated(true);
       setChatId(data?.id);
-
       return data;
     }
 
@@ -136,7 +106,7 @@ const Chat = () => {
       console.error("Error updating user chats:", error);
       return null;
     }
-
+  
     router.replace(`/chat/${chatId}`, undefined);
   
     return data;
@@ -200,10 +170,12 @@ const Chat = () => {
 
   const handleResponse = async () => {
     if (!message.trim()) return;
+    if (isTyping) return;
 
     const timestamp = Date.now();
     const newResponses = [...responses, { isUser: true, message, timestamp }];
     setResponses(newResponses);
+    setIsTyping(true);
     setMessage("");
     if (!chatView) setChatView(true);
 
@@ -238,17 +210,11 @@ const Chat = () => {
         specialAction = JSON.parse(fixedJson);
 
         if (specialAction.id === 1) {
-          setPendingSAct(1);
-          setSActData(specialAction.data);
-
           setResponses([
             ...newResponses,
             { isUser: false, message: response.response, timestamp: Date.now(), data: specialAction.data },
           ]);
         } else if (specialAction.id === 0) {
-          setPendingSAct(2);
-          setSActData(specialAction.data);
-
           setResponses([
             ...newResponses,
             { isUser: false, message: response.response, timestamp: Date.now(), data: specialAction.data },
@@ -257,14 +223,21 @@ const Chat = () => {
       }
     } catch (error) {
       console.error("Error fetching response:", error);
+    } finally {
+      setIsTyping(false);
     }
-  };
+  }; 
 
 
   const [user, setUser] = useState<any>(null);
   const [dbUser, setDbUser] = useState<any>(null);
 
   useEffect(() => {
+    setMessage("");
+    setResponses([]);
+    setChatView(false);
+    setIsChatCreated(false);
+
     const fetchUser = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
@@ -307,13 +280,40 @@ const Chat = () => {
     }
 
     if (responses.length > 0 && !isChatCreated && user) {
+      setIsChatCreated(true);
       createChat(user.id);
     }
 
-    if (isChatCreated && chatId != "") {
-      updateChat(chatId)
-    }
+    console.log("responses", responses);
+
   }, [responses]);
+
+  useEffect(() => {
+    const fetchChats = async () => {
+      if (!user) return;
+  
+      try {
+        const { data, error } = await supabase
+          .from("chats")
+          .select("*")
+          .eq("user_id", user.id)
+
+        
+        if (error && error.code !== "PGRST116") {
+          console.error("Error fetching chats:", error);
+          return;
+        }
+  
+        if (data) {
+          setChats(data.flatMap(chat => chat.msgs));
+        }
+      } catch (error) {
+        console.error("Error fetching chats:", error);
+      }
+    };
+  
+    fetchChats();
+  }, [user]);
 
   useEffect(() => {
     if (isChatCreated && chatId != "" && responses.length >= 2) {
@@ -321,9 +321,8 @@ const Chat = () => {
     }
   })
 
-
   const handleSimulationClick = () => {
-    setShowSimulation(true);  // Set simulation view to true
+    setShowSimulation(true); 
   };
 
   return (
@@ -335,13 +334,14 @@ const Chat = () => {
             <div                  
             className="flex bg-opacity-25 w-[82%] h-[94%] rounded-[3rem] bg-bgsec flex-col items-center justify-center relative">
               { showSimulation ? (
-                <Orbitals />  // Show Orbitals component when simulation view is enabled
+                <Orbitals /> 
               ) : (
                 <div 
                   className="flex flex-col w-4/6 p-9 h-5/6 overflow-y-auto"
                   ref={chatContainerRef}  
                   style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 >
+                  {/* implement a list of scrollable */}
                   {responses.map((chat, index) => (
                     <div
                       key={index}
@@ -419,10 +419,11 @@ const Chat = () => {
                 >
                   <Image
                     src={arrowLogo}
+                    aria-disabled={isTyping}
                     alt="->"
                     width={256}
                     height={256}
-                    className="p-1.5 w-10 h-10"
+                    className={`p-1.5 w-10 h-10 ${isTyping && 'cursor-not-allowed'}`}
                   />
                 </div>
                 </div>
