@@ -9,8 +9,8 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ currentPage }) => {
   const menuItems = [
     { name: "Chat", key: "chat", icon: "chat" },
-    { name: "Laboratory", key: "dashboard", icon: "beaker" },
-    { name: "Library", key: "notebook", icon: "notebook" },
+    { name: "Laboratory", key: "lab", icon: "beaker" },
+    { name: "Library", key: "lib", icon: "notebook" },
     { name: "Performance", key: "statistics", icon: "statistics" },
     { name: "Settings", key: "settings", icon: "settings" },
   ];

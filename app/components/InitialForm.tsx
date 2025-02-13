@@ -61,7 +61,7 @@ const InitialForm: React.FC<InitialFormInterface> = ({ user }) => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background text-foreground p-6">
+    <div className="min-h-screen flex items-center justify-center bg-foreground text-background p-6">
       <div className="w-2/3 p-6 bg-bgsec shadow-lg rounded-2xl">
         {step === 1 && (
           <div>
@@ -73,7 +73,7 @@ const InitialForm: React.FC<InitialFormInterface> = ({ user }) => {
                 <div
                   key={label}
                   className="flex flex-col text-foreground items-center w-1/3 cursor-pointer p-4 bg-background justify-center
-                  rounded-xl text-center transition-all duration-300 transform hover:scale-105 hover:bg-foreground 
+                  rounded-xl text-center transition-all duration-300 transform hover:scale-105 hover:bg-lprim 
                   hover:text-background"
                   onClick={() => handleSelect("grade", label)}
                 >
@@ -98,7 +98,7 @@ const InitialForm: React.FC<InitialFormInterface> = ({ user }) => {
                 <div
                   key={label}
                   className="flex flex-col text-foreground items-center w-1/3 cursor-pointer p-4 bg-background justify-center
-                  rounded-xl text-center transition-all duration-300 transform hover:scale-105 hover:bg-foreground 
+                  rounded-xl text-center transition-all duration-300 transform hover:scale-105 hover:bg-bgsec 
                   hover:text-background"
                   onClick={() => handleSelect("learningStyle", label)}
                 >
