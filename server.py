@@ -1,13 +1,11 @@
 import os
 import time
 import json
-import fitz  # PyMuPDF
-import pytesseract
 import chromadb
+import random
 
 import google.generativeai as genai
 
-import random
 from flask_cors import CORS
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
@@ -15,17 +13,27 @@ from utils import *
 from supabase import create_client, Client
 from sentence_transformers import SentenceTransformer
 
+START = time.time()
+
 load_dotenv()
+
+print(f"LOADED .ENV @ {time.time() - START}")
 
 url: str = os.getenv("SUPABASE_URL")
 key: str = os.getenv("SUPABASE_ANON_KEY")
 
 supabase: Client = create_client(url, key)
 
+print(f"LOADED SUPABASE CLIENT @ {time.time() - START}")
+
 embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+
+print(f"LOADED SentenceTransformer(all-MiniLM-L6-v2) @ {time.time() - START}")
 
 chroma_client = chromadb.PersistentClient(path="./db")
 collection = chroma_client.get_or_create_collection(name="knowledge_base")
+
+print(f"SETUP ChromaDB @ {time.time() - START}")
 
 app = Flask(__name__)
 CORS(app)
@@ -36,9 +44,14 @@ API_KEYS = [
     os.getenv("API_KEY3"),
     os.getenv("API_KEY4"),
     os.getenv("API_KEY5"),
+    os.getenv("API_KEY6"),
+    os.getenv("API_KEY7"),
+    os.getenv("API_KEY8"),
+    os.getenv("API_KEY9"),
+    os.getenv("API_KEY10"),
+    os.getenv("API_KEY11"),
+    os.getenv("API_KEY12")
 ]
-
-random.shuffle(API_KEYS)
 
 def get_valid_response(prompt):
     for api_key in API_KEYS:
@@ -51,14 +64,16 @@ def get_valid_response(prompt):
                 return response.text
         except Exception as e:
             print(f"API Key {api_key} failed: {e}")
+        finally:
+            random.shuffle(API_KEYS)
     return None
 
-def load_prompts():
+def load_prompts(): 
     with open("prompts.json", "r") as file:
         return json.load(file)
 
 prompts = load_prompts()
-print(prompts.keys())
+
 
 @app.route("/api/title", methods=["POST"])
 def title():
@@ -102,6 +117,8 @@ def tutor():
     retrieved_knowledge = "\n".join(relevant_docs[0])
     full_prompt = prompts["tutor_prompt"].format(history=history, relevant_knowledge=retrieved_knowledge, user_input=user_input)
     
+    print(f"LEN OF PROMPT: {len(full_prompt)}")
+
     response_text = get_valid_response(full_prompt)
     special_prompt = prompts["special_prompt"].format(history=history, user_input=user_input)
     special_action_text = get_valid_response(special_prompt)
