@@ -17,9 +17,7 @@ const LibraryPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [uploading, setUploading] = useState(false);
   const [selectedPdfs, setSelectedPdfs] = useState<number[]>([]);
-  const [file, setFile] = useState<File | null>(null);
-  const [fileName, setFileName] = useState("");
-  
+
   const router = useRouter();
 
   useEffect(() => {
@@ -79,22 +77,41 @@ const LibraryPage: React.FC = () => {
   };
 
   const handleFileUpload = async () => {
-    if (!file || !fileName) return;
-    setUploading(true);
-
-    const { data, error } = await supabase.storage.from("pdfs").upload(`${Date.now()}_${file.name}`, file);
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "application/pdf";
     
-    if (error) {
-      console.error("Error uploading file:", error);
-    } else {
-      const fileUrl = `https://your-supabase-bucket-url/${data.path}`;
-      await supabase.from("pdfs").insert([{ name: fileName, link: fileUrl }]);
-      fetchPdfs();
-    }
+    fileInput.onchange = async (e: any) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      const fileName = prompt("Enter PDF Name:");
+      if (!fileName) return;
+      
+      setUploading(true);
+      const { data, error } = await supabase.storage.from("books").upload(`${Date.now()}_${file.name}`, file);
+      
+      if (error) {
+        console.log(data);
+        console.error("Error uploading file:", error);
+      } else {
+        const { data: publicUrlData } = supabase.storage.from("books").getPublicUrl(data.path);
+        const fileUrl = publicUrlData.publicUrl;
+        const { data: insertedPdf } = await supabase.from("pdfs").insert([{ name: fileName, link: fileUrl }]).select("id").single();
+        
+        if (insertedPdf) {
+          const updatedRes = [...new Set([...(dbUser?.res || []), insertedPdf.id])];
+          await supabase.from("users").update({ res: updatedRes }).eq("id", user.id);
+          setDbUser({ ...dbUser, res: updatedRes });
+        }
+        
+        fetchPdfs();
+      }
+      
+      setUploading(false);
+    };
     
-    setUploading(false);
-    setFile(null);
-    setFileName("");
+    fileInput.click();
   };
 
   return !(user && dbUser) ? (
@@ -106,7 +123,7 @@ const LibraryPage: React.FC = () => {
         <div className="flex bg-opacity-25 w-[82%] h-[94%] rounded-[3rem] bg-bgsec flex-col items-center p-6">
           <h1 className="text-8xl font-bold font-nue text-background">Library</h1>
 
-          <div className="w-full max-w-2xl flex flex-row items-center justify-between space-x-4">
+          <div className="w-full max-w-2xl h-16 flex items-center justify-between space-x-4 mb-6">
             <input
               type="text"
               placeholder="Search PDFs..."
@@ -119,37 +136,27 @@ const LibraryPage: React.FC = () => {
                 onClick={handleBulkAddToCollection}
                 className="bg-prim2 text-white px-4 py-2 rounded hover:bg-lprim transition-all duration-300"
               >
-                Add Selected to Collection
+                Add to Collection
               </button>
             )}
-            <div className="flex flex-col items-center gap-4 mt-4">
-            <input type="file" accept="application/pdf" onChange={(e) => setFile(e.target.files?.[0] || null)} />
-            <input type="text" placeholder="Enter PDF Name" value={fileName} onChange={(e) => setFileName(e.target.value)} className="bg-bgsec h-10 text-white rounded-lg pl-3 border focus:border-prim2" />
-            <button onClick={handleFileUpload} disabled={uploading} className="bg-prim2 text-white px-4 py-2 rounded hover:bg-lprim transition-all duration-300">
-              {uploading ? "Uploading..." : "Upload PDF"}
-            </button>
+              <button onClick={handleFileUpload} disabled={uploading} className="bg-prim2 text-white px-3 py-2 h-16 
+              rounded hover:bg-lprim transition-all duration-300">
+                {uploading ? "Uploading..." : "Upload "}
+              </button>
           </div>
-          </div>
-
           
 
-          <div className="h-full overflow-y-auto w-2/3 mt-6" style={{ scrollbarWidth: 'none' }}>
+          <div className="flex flex-col w-1/2 overflow-y-auto" style={{scrollbarWidth: 'none'}}>
             {pdfs
               .filter((pdf) => pdf.name.toLowerCase().includes(searchTerm.toLowerCase()))
-              .filter((pdf) => !dbUser.res?.includes(pdf.id))
               .map((pdf) => (
                 <div key={pdf.id} 
-                  className={`flex justify-between items-start p-4 border-b ${selectedPdfs.includes(pdf.id) && 'bg-white/20'}`}
                   onClick={() => toggleSelectPdf(pdf.id)}
-                >
-                  <div>
-                    <p className="text-lg font-semibold text-background">{pdf.name}</p>
-                    <p className="text-sm text-gray-500">{new Date(pdf.created_at).toLocaleString()}</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <a href={pdf.link} target="_blank" rel="noopener noreferrer" className="bg-prim2 text-white px-4 py-2 rounded hover:bg-lprim transition-all duration-300">
-                      View
-                    </a>
+                  className={`flex shadow-md flex-row items-center justify-between border-b 
+                  ${selectedPdfs.includes(pdf.id) ? "bg-white/30" : "Select"}`}>
+                  <div className="flex flex-col p-3">
+                    <h2 className="text-lg font-semibold text-background">{pdf.name}</h2>
+                    <a href={pdf.link} target="_blank" rel="noopener noreferrer" className="text-blue-500">View PDF</a>
                   </div>
                 </div>
               ))}
