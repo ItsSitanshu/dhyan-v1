@@ -2,10 +2,10 @@ import React from "react";
 
 const Methods = () => {
   return (
-    <div className="bg-foreground text-white w-full px-6 py-12">
+    <div className="bg-foreground text-white w-full px-6 py-12 font-nue">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-5xl font-extrabold mb-6">Methods</h1>
-        <p className="text-lg text-gray-300 leading-relaxed mb-6">
+        <h1 className="text-5xl font-semibold font-nue text-white">Methods</h1>
+        <p className="text-lg text-gray-300 leading-relaxed mb-6 pt-2">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde
           reiciendis maxime ipsa voluptatibus, impedit excepturi itaque error
           nostrum quasi? Dolorem quasi labore blanditiis optio maxime molestiae
