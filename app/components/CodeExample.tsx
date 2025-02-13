@@ -2,7 +2,7 @@ import React from "react";
 
 const CodeExample = () => {
   return (
-    <div className="w-full max-w-4xl mx-auto mt-12 p-6 rounded-lg bg-bgsec text-white space-y-6">
+    <div className="w-full max-w-4xl mx-auto mt-12 p-6 rounded-lg bg-lprim text-white space-y-6">
       {/* User's Message */}
       <div>
         <p className="text-lg font-semibold">User</p>
@@ -10,7 +10,7 @@ const CodeExample = () => {
       </div>
 
       {/* Incorrect C Code */}
-      <pre className="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto">
+      <pre className="bg-bgsec text-white p-4 rounded-lg overflow-x-auto">
         <code>
           {`#include <stdio.h>
 
@@ -53,7 +53,7 @@ int main() {
 
       {/* Corrected Code */}
       <p className="text-lg font-semibold">Corrected Code:</p>
-      <pre className="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto">
+      <pre className="bg-bgsec text-white p-4 rounded-lg overflow-x-auto">
         <code>
           {`#include <stdio.h>
 
