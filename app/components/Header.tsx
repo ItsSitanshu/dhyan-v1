@@ -1,14 +1,15 @@
 "use client";
 
 import React from "react";
+import SloganRotator from "./SloganRotator";
 
 const HeaderHero = () => {
   return (
     <div className="flex flex-col items-center w-full">
-      <header className="w-full max-w-5xl flex justify-between items-center px-6 py-4 border-b-2">
+      <header className="w-full max-w-5xl flex justify-between items-center px-6 py-4 ">
         <div className="flex items-center space-x-3">
-          <img alt="logo" className="h-10" src="/logo.svg" />
-          <span className="text-3xl font-semibold font-nue text-white">
+          <img alt="logo" className="h-16" src="/logo.svg" />
+          <span className="text-4xl mt-1.5 font-semibold font-nue text-white">
             Dhyan.AI
           </span>
         </div>
@@ -18,6 +19,7 @@ const HeaderHero = () => {
           </button>
         </a>
       </header>
+      <SloganRotator/>
     </div>
   );
 };

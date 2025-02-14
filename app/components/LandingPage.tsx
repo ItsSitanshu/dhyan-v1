@@ -19,7 +19,7 @@ const LandingPage = () => {
       initial="hidden" // Start with hidden state
       animate="visible" // Animate to visible state
       variants={pageVariants} // Apply variants
-      className="bg-foreground text-foreground font-sans min-h-screen flex flex-col items-center overflow-hidden"
+      className="bg-lprim text-background font-sans min-h-screen flex flex-col items-center overflow-hidden"
     >
       <Header />
       <FeatureSection />
@@ -30,7 +30,7 @@ const LandingPage = () => {
       <Methods />
 
       {/* Footer */}
-      <footer className="bg-foreground text-gray-300 w-full py-8 mt-12">
+      <footer className="w-full py-8 mt-12">
         <div className="max-w-6xl mx-auto text-center">
           <p className="text-sm">
             &copy; {new Date().getFullYear()} Dhyan.AI. All rights reserved.

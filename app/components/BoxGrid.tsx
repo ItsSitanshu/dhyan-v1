@@ -80,6 +80,7 @@ const BoxGrid: React.FC<BoxGridProps> = ({
           white-space: nowrap;
           position: relative;
           margin-top: 25px;
+          margin-bottom : 10px;
         }
 
         .carousel-track-inner {
