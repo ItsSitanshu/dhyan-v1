@@ -61,3 +61,11 @@ cd ..
 
 echo "dhyan.ai is now up and running!"
 ```
+
+## The Initial Team  
+
+**[Sitanshu Shrestha](https://github.com/ItsSitanshu)** - Lead Developer  
+**[Sourya Udas]()** - IoT Engineer  
+**[Pranjal Panthi](https://github.com/ghPranja7l)** - Frontend Developer  
+**[Aashug Baruwal](https://github.com/baruwalaashug)** - Data Analyst  
+**[Rajit Acharya](https://github.com/CodeXRajit)** - Data Analyst / Lead Presenter  

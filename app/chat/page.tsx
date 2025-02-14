@@ -187,7 +187,9 @@ const Chat = () => {
         conversationContext = trimToMaxTokens(conversationContext, MAX_TOKENS);
       }
 
-      const response = await APITutor({}, message, conversationContext);
+      const finalMessage = message + "\n USER'S NAME IS: " + user?.user_metadata?.username;
+
+      const response = await APITutor({}, finalMessage, conversationContext);
 
       if (response.code === 200) {
         setResponses([
@@ -366,7 +368,7 @@ const Chat = () => {
   };
 
   return (
-    !(user && dbUser) ? <LoadingScreen/> :
+    !(user || dbUser) ? <LoadingScreen/> :
     user ? (
       dbUser ? (
         <div className="h-screen bg-lprim flex items-center p-4">
