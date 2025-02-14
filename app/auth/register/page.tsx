@@ -11,8 +11,8 @@ export default function Login() {
     const [scale, setScale] = useState<number>(200);
 
     return (
-        <div className="flex h-screen w-screen justify-center items-center" onClick={() => setScale(170)}>
-            <div className="flex flex-row justify-start w-10/12 h-5/6 bg-background rounded-3xl">
+        <div className="flex h-screen w-screen justify-center items-center bg-lprim" onClick={() => setScale(170)}>
+            <div className="flex flex-row justify-start w-10/12 h-5/6 bg-lprim rounded-3xl">
                 <div className="w-1/2 h-full relative flex flex-col items-center justify-center rounded-3xl z-0" style={{
                     background: `radial-gradient(100% 80% at 1% 1%, var(--prim1) -100%, var(--sec1) 60%, var(--prim2) 100%, var(--sec2) 200%)`,
                 }}>
@@ -29,8 +29,8 @@ export default function Login() {
                 </div>
                 <div className="w-1/2 h-full relative flex flex-col items-center justify-center z-0">
                     <div className="w-9/12 flex flex-col items-center justify-center pt-16">
-                        <h1 className="text-foreground font-nue text-3xl">Login to your Account</h1>
-                        <p className="text-foreground/[.5]  text-lg">Welcome back! Are you ready to start learning?</p>
+                        <h1 className="text-background font-nue text-3xl">Login to your Account</h1>
+                        <p className="text-background/[.5]  text-lg">Welcome back! Are you ready to start learning?</p>
                         <AuthButton />
                         <AuthForm />
                     </div>

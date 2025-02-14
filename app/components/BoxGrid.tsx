@@ -47,7 +47,7 @@ const BoxGrid: React.FC<BoxGridProps> = ({
   };
 
   return (
-    <div className="relative w-full overflow-hidden">
+    <div className="relative w-full overflow-hidden ">
       <div className="carousel-track">
         <div
           className={`carousel-track-inner ${
@@ -79,8 +79,6 @@ const BoxGrid: React.FC<BoxGridProps> = ({
           overflow: hidden;
           white-space: nowrap;
           position: relative;
-          margin-top: 25px;
-          margin-bottom : 10px;
         }
 
         .carousel-track-inner {
@@ -109,11 +107,11 @@ const BoxGrid: React.FC<BoxGridProps> = ({
           text-align: center;
           white-space: nowrap;
           cursor: pointer;
-          transition: background 0.08s;
+          transition: background 0.8s;
         }
 
         .box:hover:not(.selected) {
-          background: var(--hoverbgsec);
+          background: #000;
         }
 
         .selected {

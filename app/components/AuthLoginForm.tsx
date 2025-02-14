@@ -44,7 +44,7 @@ const AuthLoginForm: FC = () => {
       <form onSubmit={handleSubmit} className="w-full flex flex-col">
         <div className="flex flex-col items-center w-full h-20">
           <div className="flex flex-col h-full w-full">
-            <span className="font-nue text-[1rem] ml-1">Email</span>
+            <span className="font-nue text-white text-[1rem] ml-1">Email</span>
             <input
               type="email"
               placeholder="e.g. haribahadur@gmail.com"
@@ -57,7 +57,7 @@ const AuthLoginForm: FC = () => {
 
         <div className="flex flex-col items-center w-full h-28 mt-3">
           <div className="flex flex-col h-full w-full">
-            <span className="font-nue text-[1rem] ml-1">Password</span>
+            <span className="font-nue text-white text-[1rem] ml-1">Password</span>
             <input
               type="password"
               placeholder="e.g. sec!!rE@321"

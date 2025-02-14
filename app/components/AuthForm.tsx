@@ -58,7 +58,7 @@ const AuthForm: FC = () => {
       <form onSubmit={handleSubmit} className="w-full flex flex-col">
         <div className="flex flex-row justify-between w-full h-16">
           <div className="flex flex-col w-5/12 h-full">
-            <span className="font-nue text-[0.7rem] ml-1">First Name</span>
+            <span className="font-nue text-white text-[0.7rem] ml-1">First Name</span>
             <input
               type="text"
               placeholder="e.g. Hari"
@@ -68,7 +68,7 @@ const AuthForm: FC = () => {
             />
           </div>
           <div className="flex flex-col w-6/12 h-full">
-            <span className="font-nue text-[0.7rem] ml-1">Last Name</span>
+            <span className="font-nue text-white text-[0.7rem] ml-1">Last Name</span>
             <input
               type="text"
               placeholder="e.g. B. Acharya"
@@ -81,7 +81,7 @@ const AuthForm: FC = () => {
 
         <div className="flex flex-col items-center w-full h-[4.2em] mt-3">
           <div className="flex flex-col h-full w-full">
-            <span className="font-nue text-[0.7rem] ml-1">Email</span>
+            <span className="font-nue text-white text-[0.7rem] ml-1">Email</span>
             <input
               type="email"
               placeholder="e.g. haribahadur@gmail.com"
@@ -94,7 +94,7 @@ const AuthForm: FC = () => {
 
         <div className="flex flex-col items-center w-full h-24 mt-3">
           <div className="flex flex-col h-full w-full">
-            <span className="font-nue text-[0.7rem] ml-1">Password</span>
+            <span className="font-nue text-white text-[0.7rem] ml-1">Password</span>
             <input
               type="password"
               placeholder="e.g. sec!!rE@321"

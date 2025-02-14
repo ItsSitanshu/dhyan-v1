@@ -55,7 +55,7 @@ const FeatureSection = () => {
 
             <div className="relative z-10 mx-auto max-w-md">
               <span
-                className={`grid h-20 w-20 place-items-center rounded-full bg-foreground transition-all duration-300 group-hover:bg-${item.hoverColor}`}
+                className={`grid h-20 w-20 place-items-center rounded-full bg-foreground transition-all duration-300 group-hover:bg-black`}
               >
                 <Image
                   width={80}

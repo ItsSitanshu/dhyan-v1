@@ -5,7 +5,7 @@ const Example = () => {
   const router = useRouter();
   
   return (
-    <div className="w-full max-w-4xl mx-auto mt-12 p-6 rounded-lg bg-bgsec text-white space-y-6 shadow-lg">
+    <div className="w-full max-w-4xl mx-auto mt-12 mb-4 p-6 rounded-lg bg-bgsec text-white space-y-6 shadow-lg">
       {/* User's Message */}
       <div>
         <p className="text-lg font-semibold">User</p>

@@ -9,7 +9,7 @@ const HeaderHero = () => {
       <header className="w-full max-w-5xl flex justify-between items-center px-6 py-4 ">
         <div className="flex items-center space-x-3">
           <img alt="logo" className="h-16" src="/logo.svg" />
-          <span className="text-4xl mt-1.5 font-semibold font-nue text-white">
+          <span className="text-4xl mt-2 font-semibold font-nue text-white">
             Dhyan.AI
           </span>
         </div>
