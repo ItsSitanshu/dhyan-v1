@@ -10,6 +10,7 @@ from flask_cors import CORS
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 from utils import *
+from prompts import *
 from supabase import create_client, Client
 from sentence_transformers import SentenceTransformer
 
@@ -67,12 +68,6 @@ def get_valid_response(prompt):
         finally:
             random.shuffle(API_KEYS)
     return None
-
-def load_prompts(): 
-    with open("prompts.json", "r") as file:
-        return json.load(file)
-
-prompts = load_prompts()
 
 
 @app.route("/api/title", methods=["POST"])
