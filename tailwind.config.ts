@@ -11,6 +11,7 @@ export default {
       fontFamily: {
         jksans: ["Plus Jakarta Sans", "sans-serif"],
         nue: ["Bebas Neue", 'serif'],
+        ars: "var(--font-arsenica)"
       },
       colors: {
         background: "var(--background)",
