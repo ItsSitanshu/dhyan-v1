@@ -1,12 +1,31 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import DetailsPopup from "@/app/components/DetailsPopup";
 
 interface SidebarProps {
   currentPage: string;
+  chats?: any[];
+  editingChatId?: string | null;
+  newTitle?: string;
+  setEditingChatId?: (id: string | null) => void;
+  setNewTitle?: (title: string) => void;
+  deleteChat?: (id: string) => void;
+  startEditing?: (chat: any) => void;
+  handleRename?: (id: string) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ currentPage }) => {
+const Sidebar: React.FC<SidebarProps> = ({
+  currentPage,
+  chats = [],
+  editingChatId = null,
+  newTitle = "",
+  setEditingChatId = () => {},
+  setNewTitle = () => {},
+  deleteChat = () => {},
+  startEditing = () => {},
+  handleRename = () => {},
+}) => {
   const menuItems = [
     { name: "Chat", key: "chat", icon: "chat" },
     { name: "Laboratory", key: "lab", icon: "beaker" },
@@ -55,12 +74,110 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage }) => {
             );
           })}
         </nav>
+        <div className="flex items-center w-full h-full">
+          <div className="flex flex-col w-full h-5/6 overflow-y-auto overflow-x-h">
+            {chats?.map((chat) => (
+              <div
+                key={chat?.id}
+                className="flex flex-row justify-between items-center pl-2 text-background shadow-lg rounded-lg
+                  hover:shadow-xl h-14 transition-all duration-400 ease-in-out hover:bg-white/20 hover:cursor-pointer"
+              >
+                <div
+                  className="flex flex-row justify-between items-center w-full"
+                  onDoubleClick={() => {
+                    setEditingChatId(chat?.id || null);
+                    setNewTitle(chat?.title || "");
+                  }}
+                >
+                  {editingChatId === chat?.id ? (
+                    <input
+                      autoFocus
+                      type="text"
+                      className="w-full text-lg font-semibold text-background bg-transparent cursor-pointer p-1"
+                      value={newTitle}
+                      onChange={(e) => setNewTitle(e.target.value)}
+                      onBlur={() => handleRename(chat?.id || "")}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleRename(chat?.id || "");
+                        if (e.key === "Escape") setEditingChatId(null);
+                      }}
+                    />
+                  ) : (
+                    <h2
+                      className="text-lg font-semibold"
+                      onDoubleClick={() => startEditing(chat)}
+                      onClick={() => router.push(`/chat/${chat?.id}`)}
+                    >
+                      {chat?.title || "Untitled Chat"}
+                    </h2>
+                  )}
+                  <DetailsPopup
+                    onEdit={() => startEditing(chat)}
+                    onDelete={() => deleteChat(chat?.id || "")}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* <div className="flex items-center w-full h-full">
+          <div className="flex flex-col w-full h-5/6 overflow-y-auto">
+            {chats?.map((chat) => (
+              <div
+                key={chat?.id}
+                className="p-4 text-background shadow-lg rounded-lg transition duration-200 hover:shadow-xl"
+              >
+                <div
+                  className="flex justify-between items-center"
+                  onDoubleClick={() => {
+                    setEditingChatId(chat?.id || null);
+                    setNewTitle(chat?.title || "");
+                  }}
+                >
+                  {editingChatId === chat?.id ? (
+                    <input
+                      autoFocus
+                      type="text"
+                      className="w-full text-lg font-semibold text-background bg-transparent cursor-pointer focus:outline-none"
+                      value={newTitle}
+                      onChange={(e) => setNewTitle(e.target.value)}
+                      onBlur={() => handleRename(chat?.id || "")}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleRename(chat?.id || "");
+                        if (e.key === "Escape") setEditingChatId(null);
+                      }}
+                    />
+                  ) : (
+                    <h2
+                      className="text-lg font-semibold cursor-pointer hover:underline"
+                      onDoubleClick={() => startEditing(chat)}
+                      onClick={() => router.push(`/chat/${chat?.id}`)}
+                    >
+                      {chat?.title || "Untitled Chat"}
+                    </h2>
+                  )}
+                  <div className="flex gap-2">
+                    <button
+                      className="bg-red-500 text-white px-3 py-1 rounded-md text-sm transition hover:bg-red-600"
+                      onClick={() => deleteChat(chat?.id || "")}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div> */}
       </div>
       <div 
-      onClick={() => router.push('/auth/logout')}
-      className="flex flex-row transition-all duration-200 hover:bg-red-500/50 hover:cursor-pointer rounded-xl p-2 items-center w-1/2 gap-2"
+        onClick={() => router.push('/auth/logout')}
+        className="flex flex-row transition-all duration-200 hover:bg-red-500/50 hover:cursor-pointer rounded-xl p-2 items-center w-1/2 gap-2"
       >
-        <Image width={256} height={256} alt={'<'} 
+        <Image
+          width={256}
+          height={256}
+          alt={'<'}
           src={require('@/app/assets/icons/logout.svg')}
           className="w-8 h-8 p-1"  
         />

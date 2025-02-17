@@ -41,7 +41,7 @@ const Chat = () => {
   const [showSimulation, setShowSimulation] = useState(false); 
   const [isTyping, setIsTyping] = useState<boolean>(false);
 
-  const [editingChatId, setEditingChatId] = useState(null);
+  const [editingChatId, setEditingChatId] = useState<string>("");
   const [newTitle, setNewTitle] = useState<string>("");
 
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
@@ -325,7 +325,7 @@ const Chat = () => {
     if (newTitle.trim() !== "") {
       renameChat(chatId);
     }
-    setEditingChatId(null);
+    setEditingChatId("");
   };
 
   const deleteChat = async (chatId: string) => {
@@ -372,7 +372,18 @@ const Chat = () => {
     user ? (
       dbUser ? (
         <div className="h-screen bg-lprim flex items-center p-4">
-          <Sidebar currentPage="chat"/>
+          <Sidebar
+            currentPage="chat"
+            chats={chats}
+            editingChatId={editingChatId}
+            newTitle={newTitle}
+            setEditingChatId={setEditingChatId}
+            setNewTitle={setNewTitle}
+            deleteChat={deleteChat}
+            startEditing={startEditing}
+            handleRename={handleRename}
+          />
+
             <div                  
             className="flex bg-opacity-25 w-[82%] h-[94%] rounded-[3rem] bg-bgsec flex-col items-center justify-center relative">
               { showSimulation ? (
@@ -383,58 +394,6 @@ const Chat = () => {
                   ref={chatContainerRef}  
                   style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 > 
-                  {responses.length == 0 &&
-                    <div className="flex items-center w-full h-full">
-                      <div className="flex flex-col bg-lprim w-3/4 h-1/2 rounded-3xl overflow-y-auto">
-                      {chats.map((chat: any) => (
-                        <div
-                          key={chat.id}
-                          className="p-4 text-background shadow-lg rounded-lg transition duration-200 hover:shadow-xl"
-                        >
-                          <div 
-                            className="flex justify-between items-center"
-                            onDoubleClick={() => {
-                              setEditingChatId((prev) => prev ? null : chat.id);
-                              setNewTitle(chat.title);
-                            }}
-                          >
-                            {editingChatId === chat.id ? (
-                              <input
-                                autoFocus
-                                type="text"
-                                className="w-full text-lg font-semibold text-background bg-transparent cursor-pointer focus:outline-none"
-                                value={newTitle}
-                                onChange={(e) => setNewTitle(e.target.value)}
-                                onBlur={() => handleRename(chat.id)}
-                                onKeyDown={(e) => {
-                                  if (e.key === "Enter") handleRename(chat.id);
-                                  if (e.key === "Escape") setEditingChatId(null);
-                                }}
-                              />
-                            ) : (
-                              <h2
-                                className="text-lg font-semibold cursor-pointer hover:underline"
-                                onDoubleClick={() => startEditing(chat)}
-                                onClick={() => router.push(`/chat/${chat.id}`)}
-                              >
-                                {chat.title || "Untitled Chat"}
-                              </h2>
-                            )}
-
-                            <div className="flex gap-2">
-                              <button
-                                className="bg-red-500 text-white px-3 py-1 rounded-md text-sm transition hover:bg-red-600"
-                                onClick={() => deleteChat(chat.id)}
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                      </div>
-                    </div>
-                  }
                   {responses.map((chat, index) => (
                     <div
                       key={index}
