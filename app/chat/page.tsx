@@ -383,8 +383,7 @@ const Chat = () => {
             startEditing={startEditing}
             handleRename={handleRename}
           />
-
-            <div                  
+            <div                 
             className="flex bg-opacity-25 w-[82%] h-[94%] rounded-[3rem] bg-bgsec flex-col items-center justify-center relative">
               { showSimulation ? (
                 <Orbitals /> 

@@ -61,6 +61,12 @@ const ChatWithId = () => {
   const [simulationId, setSimulationId] = useState<string>("");
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
 
+  const [chats, setChats] = useState<any>([]);
+  const [isChatCreated, setIsChatCreated] = useState<boolean>(false);
+
+  const [editingChatId, setEditingChatId] = useState<string>("");
+  const [newTitle, setNewTitle] = useState<string>("");
+
   const generateTitle = async (chatId: string) => {
     if (responses.length != 6) return;
 
@@ -255,10 +261,78 @@ const ChatWithId = () => {
   
 
   const handleSimulationClick = (simId: string) => {
-    console.log("sim query: ", simId);
-
     setSimulationId(simId);
     setShowSimulation(true);
+  };
+
+  useEffect(() => {
+    const fetchChats = async () => {
+      if (!user) return;
+  
+      try {
+        const { data, error } = await supabase
+          .from("chats")
+          .select("*")
+          .eq("user_id", user.id)
+
+        
+        if (error && error.code !== "PGRST116") {
+          console.error("Error fetching chats:", error);
+          return;
+        }
+  
+        if (data) {
+          setChats(data);
+          console.log(data);
+
+        }
+      } catch (error) {
+        console.error("Error fetching chats:", error);
+      }
+    };
+  
+    fetchChats();
+  }, [user]);
+
+  const startEditing = (chat: any) => {
+    setEditingChatId(chat.id);
+    setNewTitle(chat.title || "Untitled Chat");
+  };
+
+  const handleRename = (chatId: string) => {
+    if (newTitle.trim() !== "") {
+      renameChat(chatId);
+    }
+    setEditingChatId("");
+  };
+
+  const deleteChat = async (chatId: string) => {
+    const { error } = await supabase.from("chats").delete().eq("id", chatId);
+    if (error) {
+      console.error("Error deleting chat:", error);
+    } else {
+      setChats(chats.filter((chat: any) => chat.id !== chatId));
+    }
+  };
+
+  const renameChat = async (chatId: string) => {
+    if (!newTitle.trim()) return;
+
+    const { error } = await supabase
+      .from("chats")
+      .update({ title: newTitle })
+      .eq("id", chatId);
+
+    if (error) {
+      console.error("Error renaming chat:", error);
+    } else {
+      setChats(
+        chats.map((chat: any) =>
+          chat.id === chatId ? { ...chat, title: newTitle } : chat
+        )
+      );
+      setNewTitle("");
+    }
   };
 
   const SimulationComponent = simulationId ? simulationComponents[simulationId] : null;
@@ -270,7 +344,17 @@ const ChatWithId = () => {
         <div className="h-screen bg-lprim flex flex-row gap-2 items-center p-4 overflow-hidden"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
-          {!showSimulation ? <Sidebar currentPage="chat" /> : (
+          {!showSimulation ?           <Sidebar
+            currentPage="chat"
+            chats={chats}
+            editingChatId={editingChatId}
+            newTitle={newTitle}
+            setEditingChatId={setEditingChatId}
+            setNewTitle={setNewTitle}
+            deleteChat={deleteChat}
+            startEditing={startEditing}
+            handleRename={handleRename}
+          /> : (
             <>
               <motion.div
                 initial={{ x: "-100%", opacity: 0 }}

@@ -10,6 +10,29 @@ const DetailsPopup: React.FC<{ onEdit: () => void; onDelete: () => void }> = ({ 
   const [popupStyle, setPopupStyle] = useState({});
 
   useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        popupRef.current &&
+        !popupRef.current.contains(event.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
     if (isOpen && buttonRef.current && popupRef.current) {
       const buttonRect = buttonRef.current.getBoundingClientRect();
       const popupRect = popupRef.current.getBoundingClientRect();
@@ -33,12 +56,15 @@ const DetailsPopup: React.FC<{ onEdit: () => void; onDelete: () => void }> = ({ 
   return (
     <div >
       <button ref={buttonRef} className="px-3 py-2 rounded-md" onClick={() => setIsOpen(!isOpen)}>
-        <Image src={require('@/app/assets/icons/more.svg')} className="h-5 w-5" height={64} width={64} alt="..."/>
+        <Image 
+          src={require('@/app/assets/icons/more.svg')}
+          className="h-8 w-8 p-2 hover:bg-white/60 transition-all duration-300 ease-in-out rounded-md  hover:cursor-pointer"
+          height={64} width={64} alt="..."/>
       </button>
       {isOpen && (
         <div
           ref={popupRef}
-          className="absolute border border-white bg-foreground shadow-lg rounded-xl p-2 text-sm font-semibold z-50 w-32 max-w-[200px] overflow-hidden"
+          className="absolute border border-white/20 bg-foreground shadow-lg rounded-xl p-2 text-sm font-semibold z-50 w-32 max-w-[200px] overflow-hidden"
           style={popupStyle}
         >
           <button onClick={onEdit} className="block px-3 py-2 text-background hover:bg-white/10 duration-300 rounded-md w-full text-left">

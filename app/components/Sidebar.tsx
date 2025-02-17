@@ -8,7 +8,7 @@ interface SidebarProps {
   chats?: any[];
   editingChatId?: string | null;
   newTitle?: string;
-  setEditingChatId?: (id: string | null) => void;
+  setEditingChatId?: (id: string) => void;
   setNewTitle?: (title: string) => void;
   deleteChat?: (id: string) => void;
   startEditing?: (chat: any) => void;
@@ -80,10 +80,11 @@ const Sidebar: React.FC<SidebarProps> = ({
               <div
                 key={chat?.id}
                 className="flex flex-row justify-between items-center pl-2 text-background shadow-lg rounded-lg
-                  hover:shadow-xl h-14 transition-all duration-400 ease-in-out hover:bg-white/20 hover:cursor-pointer"
+                  hover:shadow-xl h-12 transition-all duration-400 ease-in-out hover:bg-white/20 hover:cursor-pointer"
               >
                 <div
                   className="flex flex-row justify-between items-center w-full"
+                  onClick={() => router.push(`/chat/${chat?.id}`)}
                   onDoubleClick={() => {
                     setEditingChatId(chat?.id || null);
                     setNewTitle(chat?.title || "");
@@ -99,14 +100,13 @@ const Sidebar: React.FC<SidebarProps> = ({
                       onBlur={() => handleRename(chat?.id || "")}
                       onKeyDown={(e) => {
                         if (e.key === "Enter") handleRename(chat?.id || "");
-                        if (e.key === "Escape") setEditingChatId(null);
+                        if (e.key === "Escape") setEditingChatId("");
                       }}
                     />
                   ) : (
                     <h2
-                      className="text-lg font-semibold"
-                      onDoubleClick={() => startEditing(chat)}
-                      onClick={() => router.push(`/chat/${chat?.id}`)}
+                      className="text-lg "
+                      
                     >
                       {chat?.title || "Untitled Chat"}
                     </h2>
