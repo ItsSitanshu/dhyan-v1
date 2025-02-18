@@ -28,7 +28,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const menuItems = [
     { name: "Chat", key: "chat", icon: "chat" },
-    { name: "Laboratory", key: "lab", icon: "beaker" },
+    // { name: "Laboratory", key: "lab", icon: "beaker" },
     { name: "Library", key: "lib", icon: "notebook" },
     { name: "Performance", key: "statistics", icon: "statistics" },
     { name: "Settings", key: "settings", icon: "settings" },

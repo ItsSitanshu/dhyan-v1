@@ -384,7 +384,6 @@ const Chat = () => {
   };
 
   return (
-    !(user || dbUser) ? <LoadingScreen/> :
     user ? (
       dbUser ? (
         <div className="h-screen bg-lprim flex items-center p-4">
@@ -485,6 +484,7 @@ const Chat = () => {
             </div>
         </div>
       ) : (
+        !(user && dbUser) ? <LoadingScreen/> :
         <InitialForm user={user} />
       )
     ) : (
