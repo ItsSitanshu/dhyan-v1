@@ -194,7 +194,7 @@ const Chat = () => {
         learningStyle: dbUser.info.learningStyle,
       }
 
-      const response = await APITutor(details, message, conversationContext);
+      const response = await APITutor(details, message, conversationContext, fileNames);
 
       if (response.code === 200) {
         setResponses([
@@ -311,6 +311,7 @@ const Chat = () => {
 
       const extractedFileNames = pdfLinks.map((pdf) => getFileNameFromUrl(pdf.link));
       setFileNames(extractedFileNames);
+      console.log("here", extractedFileNames);
     };
 
     fetchChatPdfs();

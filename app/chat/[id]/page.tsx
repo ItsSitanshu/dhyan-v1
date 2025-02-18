@@ -25,6 +25,7 @@ import ProjectileSimulation from "@/app/simulations/ProjectileMotion";
 
 import { useParams, useRouter } from "next/navigation";
 import AddPdfToChat from "@/app/components/AddPdfToChat";
+import FlashcardDeck from "@/app/components/FlashCards";
 
 type Chat = {
   isUser: boolean;
@@ -148,13 +149,14 @@ const ChatWithId = () => {
       if (tokenCount > MAX_TOKENS) {
         conversationContext = trimToMaxTokens(conversationContext, MAX_TOKENS);
       }
+      
       const details = { 
         name: user?.user_metadata?.username,
         grade: dbUser.info.grade,
         learningStyle: dbUser.info.learningStyle,
       }
 
-      const response = await APITutor(details, message, conversationContext);
+      const response = await APITutor(details, message, conversationContext, fileNames);
 
       if (response.code === 200) {
         setResponses([
@@ -175,12 +177,12 @@ const ChatWithId = () => {
         if (specialAction.id === 1) {
           setResponses([
             ...newResponses,
-            { isUser: false, message: response.response, timestamp: Date.now(), data: specialAction.data },
+            { isUser: false, message: response.response, timestamp: Date.now(), data: specialAction },
           ]);
         } else if (specialAction.id === 0) {
           setResponses([
             ...newResponses,
-            { isUser: false, message: response.response, timestamp: Date.now(), data: specialAction.data },
+            { isUser: false, message: "", timestamp: Date.now(), data: specialAction },
           ]);
         }
       }
@@ -314,11 +316,7 @@ const ChatWithId = () => {
     };
 
     fetchChatPdfs();
-  }, [chats, chatId]);
-
-  useEffect(() => {
-    console.log("xyz", fileNames);
-  }, [fileNames]);
+  }, [chats, chatId, responses]);
 
 
   const startEditing = (chat: any) => {
@@ -511,7 +509,7 @@ const ChatWithId = () => {
                       key={index}
                       className={`flex ${chat?.data && 'flex-col'} ${chat.isUser ? "justify-end" : "justify-start"}`}
                     >
-                      <div
+                      { !(chat?.data && chat?.data.id === 0) && <div
                         className={`relative px-3 py-3 font-normal rounded-2xl my-2 max-w-[85%] ${!chat.isUser ? 'bg-foreground' : ''} bg-opacity-20 z-50`}
                       >
                         {chat.isUser && (
@@ -531,16 +529,19 @@ const ChatWithId = () => {
                         >
                           {chat.message}
                         </ReactMarkdown>
-                      </div>
-                      {!chat.isUser && chat?.data && (
+                      </div> }
+                      {!chat.isUser && chat?.data && chat?.data.id === 1 && (
                         <div
                           className="flex w-fit flex-row items-center justify-center border border-foreground
                           boreder text-background hover:bg-foreground hover:font-bold hover:cursor-pointer
                           transition-all duration-500 h-8 p-3 py-5 rounded-2xl"
-                          onClick={() => handleSimulationClick(chat.data)}
+                          onClick={() => handleSimulationClick(chat.data.data)}
                         >
-                          Launch a simulation: {getSimulationTitle(chat.data)}
+                          Launch a simulation: {getSimulationTitle(chat.data.data)}
                         </div>
+                      )}
+                      {!chat.isUser && chat?.data && chat?.data.id === 0 && (
+                        <FlashcardDeck flashcards={chat.data?.data}/>
                       )}
                     </div>
                   ))}

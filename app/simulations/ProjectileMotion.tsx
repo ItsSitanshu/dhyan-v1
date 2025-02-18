@@ -28,12 +28,10 @@ const ProjectileSimulation: React.FC = () => {
       Events,
     } = Matter;
 
-    // Create the engine and world
     const engine = Engine.create();
     engineRef.current = engine;
     const world = engine.world;
 
-    // Create the Matter.js renderer
     const render = Render.create({
       element: sceneRef.current,
       engine: engine,
@@ -70,7 +68,6 @@ const ProjectileSimulation: React.FC = () => {
 
     World.add(world, [ground, mouseConstraint]);
 
-    // Track projectile movements and render visuals
     Events.on(engine, "afterUpdate", () => {
       if (projectileRef.current) {
         if (!trajectories.current.length || projectileRef.current.position.y < window.innerHeight - 30) {
@@ -177,9 +174,12 @@ const ProjectileSimulation: React.FC = () => {
       );
       ctx.stroke();
 
-      ctx.fillStyle = "white";
+      ctx.fillStyle = "blue";
       ctx.font = "14px Arial";
-      ctx.fillText(`Mass: ${mass} kg`, body.position.x + 10, body.position.y - 10);
+      ctx.fillText(`Vertical Force: ${(body.velocity.y).toFixed(2)} m/s`, 250, 250);
+      ctx.fillStyle = "yellow";
+      ctx.fillText(`Horizontal Force: ${(body.velocity.x).toFixed(2)} m/s`, 250, 280);
+
     }
   };
 

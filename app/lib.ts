@@ -1,13 +1,16 @@
 import axios from 'axios';
 
-const APITutor = async (details: any, query: string, history: string) => {
+const APITutor = async (details: any, query: string, history: string, files: any) => {
   try {
     const response = await axios.post('http://localhost:5000/api/tutor', {
       details: details,
       history: history,
       query: query,
+      files: files,
       feedback_metrics: {}
     });
+
+    console.log(response.data);
 
     return response.data;
   } catch (error) {
