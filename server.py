@@ -31,8 +31,9 @@ embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
 
 print(f"LOADED SentenceTransformer(all-MiniLM-L6-v2) @ {time.time() - START}")
 
-chroma_client = chromadb.PersistentClient(path="./db")
-collection = chroma_client.get_or_create_collection(name="knowledge_base")
+chroma_client = chromadb.PersistentClient(path="./rag")
+collection = chroma_client.get_or_create_collection(name="books")
+
 
 print(f"SETUP ChromaDB @ {time.time() - START}")
 
@@ -94,10 +95,13 @@ def title():
     else:
         return jsonify({"code": HTTP_BAD_REQUEST, "response": "API request failed"})
 
+
 @app.route("/api/tutor", methods=["POST"])
 def tutor():
+    details = request.json.get("details")
     user_input = request.json.get("query")
-    history = request.json.get("history", "")
+    history = request.json.get("history")
+    files = request.json.get("files")
 
     start = time.time()
 
@@ -107,13 +111,20 @@ def tutor():
             "response": "No query provided",
             "time": time.time() - start,
         })
-    
-    relevant_docs = retrieve_relevant_docs(user_input, top_k=3)
-    retrieved_knowledge = "\n".join(relevant_docs[0])
-    full_prompt = prompts["tutor_prompt"].format(history=history, relevant_knowledge=retrieved_knowledge, user_input=user_input)
-    
-    print(f"LEN OF PROMPT: {len(full_prompt)}")
 
+    print(details)
+
+    relevant_docs = retrieve_most_relevant_chunk(collection, user_input, files)
+    retrieved_knowledge = "\n".join(relevant_docs)
+    full_prompt = prompts["tutor_prompt"].format(
+        name=details["name"],
+        grade=details["grade"],
+        learningStyle=details["learningStyle"],
+        history=history,
+        relevant_knowledge=retrieved_knowledge,
+        user_input=user_input
+    )
+    
     response_text = get_valid_response(full_prompt)
     special_prompt = prompts["special_prompt"].format(history=history, user_input=user_input)
     special_action_text = get_valid_response(special_prompt)
@@ -164,5 +175,31 @@ def extract():
         "extracted_info": extracted_text if extracted_text else "Extraction failed"
     })
 
+@app.route("/api/vectorize", methods=["POST"])
+def vectorize():
+    data = request.json
+    filename = data.get("filename")
+    
+    if not filename:
+        return jsonify({"error": "Filename required"}), HTTP_BAD_REQUEST
+    
+    response = supabase.storage.from_("books").list()
+    files = {file["name"] for file in response}
+
+    if filename not in files:
+        return jsonify({"error": "File not found in storage"}), HTTP_NOT_FOUND
+
+    if is_vectorized(collection, filename):
+        return jsonify({"message": "Already vectorized"}), HTTP_OK
+
+    pdf_data = supabase.storage.from_("books").download(filename)
+    with open(f"/tmp/{filename}", "wb") as f:
+        f.write(pdf_data)
+
+    sections = extract_text_from_pdf(f"/tmp/{filename}")
+    vectorize_and_store(collection, filename, sections)
+    
+    return jsonify({"message": f"Vectorized {filename} successfully", "sections": len(sections)}), HTTP_OK
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, threaded=True)

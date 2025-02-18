@@ -6,9 +6,6 @@ from sentence_transformers import SentenceTransformer
 
 embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
 
-chroma_client = chromadb.PersistentClient(path="./db")
-collection = chroma_client.get_or_create_collection(name="tutoring_knowledge")
-
 HTTP_OK = 200
 HTTP_CREATED = 201
 HTTP_ACCEPTED = 202
@@ -31,59 +28,69 @@ HTTP_GATEWAY_TIMEOUT = 504
 
 def embed_text(text):
     return embedding_model.encode(text).tolist()
-def add_to_knowledge_base(documents):
-    for i, doc in enumerate(documents):
-        collection.add(
-            ids=[str(i)],  
-            documents=[doc],
-            embeddings=[embed_text(doc)]
+
+def is_vectorized(collection, filename):
+    results = collection.query(
+        query_embeddings=[[0] * 384],  
+        where={"filename": filename}, 
+        n_results=3
+    )
+    
+    results_actual = results["ids"][0]
+
+    print(len(results_actual))
+
+    return len(results_actual) > 0
+
+def retrieve_most_relevant_chunk(collection, query, priority_files=None, top_k=5, min_score=0.5):
+    query_embedding = embed_text(query)
+
+    print("PF", priority_files)
+
+    if priority_files:
+        results = collection.query(
+            query_embeddings=[query_embedding],
+            where={"filename": {"$in": priority_files}},  
+            n_results=top_k
         )
 
-def retrieve_relevant_docs(query, top_k=3):
-    query_embedding = embed_text(query)
-    results = collection.query(query_embedding, n_results=top_k)
-    return results['documents'] if 'documents' in results else []
+        if not results.get("matches"):
+            results = collection.query(query_embeddings=[query_embedding], n_results=top_k)
+    else:
+        results = collection.query(query_embeddings=[query_embedding], n_results=top_k)
+
+    matches = results.get("matches", [])
+    filtered_matches = [m for m in matches if m.get("score", 0) >= min_score]
+
+    filtered_matches.sort(key=lambda x: x.get("score", 0), reverse=True)
+
+    if filtered_matches:
+        return filtered_matches[0].get("document", "")
+
+    return ""
+
+
+
 
 def extract_text_from_pdf(pdf_path):
     doc = fitz.open(pdf_path)
     text_sections = []
-    
-    for page in doc:
-        text = page.get_text("text")
-        if text.strip(): 
-            text_sections.append(text.strip())
-        else:  
-            image = convert_from_path(pdf_path, first_page=page.number + 1, last_page=page.number + 1)[0]
-            ocr_text = pytesseract.image_to_string(image)
-            text_sections.append(ocr_text.strip())
 
-    return text_sections
-
-def add_pdf_to_knowledge_base(pdf_path):
-    sections = extract_text_from_pdf(pdf_path)
-    add_to_knowledge_base(sections)
-    print(f"Added {len(sections)} sections from {pdf_path} to the knowledge base.")
-
-
-def embed_text(text):
-    return embedding_model.encode(text).tolist()
-
-def extract_text_from_pdf(pdf_path):
-    doc = fitz.open(pdf_path)
-    text_sections = []
-    
     for page in doc:
         text = page.get_text("text")
         if text.strip():
             text_sections.append(text.strip())
-        else:  # Use OCR if no text is found
-            pix = page.get_pixmap()
-            ocr_text = pytesseract.image_to_string(img)
-            text_sections.append(ocr_text.strip())
-    
+
     return text_sections
 
-def validate_filenames(supabase, filenames):
-    response = supabase.table("documents").select("filename").in_("filename", filenames).execute()
-    valid_files = {row["filename"] for row in response.data} if response.data else set()
-    return valid_files
+def vectorize_and_store(collection, filename, text_sections):
+    embeddings = [embed_text(section) for section in text_sections]
+    
+    for i, section in enumerate(text_sections):
+        collection.add(
+            ids=[f"{filename}_{i}"],
+            documents=[section],
+            embeddings=[embeddings[i]],
+            metadatas=[{"filename": filename}]
+        )
+    
