@@ -1,0 +1,6 @@
+[submodule "wav2letter"]
+	path = wav2letter
+	url = https://github.com/flashlight/wav2letter.git
+[submodule "flashlight"]
+	path = flashlight
+	url = https://github.com/flashlight/flashlight.git
