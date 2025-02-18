@@ -54,7 +54,7 @@ const DetailsPopup: React.FC<{ onEdit: () => void; onDelete: () => void }> = ({ 
   }, [isOpen]);
 
   return (
-    <div >
+    <div>
       <button ref={buttonRef} className="px-3 py-2 rounded-md" onClick={() => setIsOpen(!isOpen)}>
         <Image 
           src={require('@/app/assets/icons/more.svg')}

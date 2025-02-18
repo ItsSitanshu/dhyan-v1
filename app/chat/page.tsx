@@ -7,16 +7,15 @@ import React, { useState, useEffect, useRef } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 import arrowLogo from "@/app/assets/icons/arrow.svg";
-import documentLogo from "@/app/assets/icons/document.svg";
 
-import { APITitle, APITutor, getTokenCount, trimToMaxTokens, getSimulationTitle } from "@/app/lib";
+import { APITitle, APITutor, getTokenCount, trimToMaxTokens, getSimulationTitle, fetchChats } from "@/app/lib";
 
 import NotSignedPopup from "@/app/components/NotSignedPopup";
 import InitialForm from "@/app/components/InitialForm";
 import LoadingScreen from "@/app/components/LoadingScreen";
 import Orbitals from "@/app/simulations/Orbitals";  // Import Orbitals component
 import Sidebar from "@/app/components/Sidebar";
-import TT from "@/app/components/ToolTip";
+import AddPdfToChat from "@/app/components/AddPdfToChat";
 
 import { useRouter } from "next/navigation";
 
@@ -37,6 +36,8 @@ const Chat = () => {
   const [chatView, setChatView] = useState<boolean>(false);
   const [isChatCreated, setIsChatCreated] = useState<boolean>(false);
   const [chatId, setChatId] = useState<string>("");
+  const [fileNames, setFileNames] = useState<string[]>([]);
+  
 
   const [showSimulation, setShowSimulation] = useState(false); 
   const [isTyping, setIsTyping] = useState<boolean>(false);
@@ -187,9 +188,13 @@ const Chat = () => {
         conversationContext = trimToMaxTokens(conversationContext, MAX_TOKENS);
       }
 
-      const finalMessage = message + "\n USER'S NAME IS: " + user?.user_metadata?.username;
+      const details = { 
+        name: user?.user_metadata?.username,
+        grade: dbUser.info.grade,
+        learningStyle: dbUser.info.learningStyle,
+      }
 
-      const response = await APITutor({}, finalMessage, conversationContext);
+      const response = await APITutor(details, message, conversationContext);
 
       if (response.code === 200) {
         setResponses([
@@ -274,6 +279,44 @@ const Chat = () => {
   }, []);
 
   useEffect(() => {
+    const getFileNameFromUrl = (url: string): string => {
+      return url.substring(url.lastIndexOf("/") + 1);
+    };
+
+    if (!chats) {
+      fetchChats(supabase, user, setChats);
+      return;
+    }
+
+    if (!chatId) return;
+
+    const fetchChatPdfs = async () => {
+      const { data, error } = await supabase
+        .from("chats")
+        .select("pdfs")
+        .eq("id", chatId)
+        .single();
+
+      if (error || !data) return;
+
+      const pdfIds = data.pdfs || [];
+      if (pdfIds.length === 0) return;
+
+      const { data: pdfLinks, error: pdfError } = await supabase
+        .from("pdfs")
+        .select("link")
+        .in("id", pdfIds);
+
+      if (pdfError || !pdfLinks) return;
+
+      const extractedFileNames = pdfLinks.map((pdf) => getFileNameFromUrl(pdf.link));
+      setFileNames(extractedFileNames);
+    };
+
+    fetchChatPdfs();
+  }, [chats, chatId]);
+
+  useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
@@ -282,38 +325,10 @@ const Chat = () => {
       setIsChatCreated(true);
       createChat(user.id);
     }
-
-    console.log("responses", responses);
-
   }, [responses]);
 
   useEffect(() => {
-    const fetchChats = async () => {
-      if (!user) return;
-  
-      try {
-        const { data, error } = await supabase
-          .from("chats")
-          .select("*")
-          .eq("user_id", user.id)
-
-        
-        if (error && error.code !== "PGRST116") {
-          console.error("Error fetching chats:", error);
-          return;
-        }
-  
-        if (data) {
-          setChats(data);
-          console.log(data);
-
-        }
-      } catch (error) {
-        console.error("Error fetching chats:", error);
-      }
-    };
-  
-    fetchChats();
+    fetchChats(supabase, user, setChats);
   }, [user]);
 
   const startEditing = (chat: any) => {
@@ -449,19 +464,7 @@ const Chat = () => {
                   }}
                 />
                 <div className="flex flex-row space-x-2">
-                  <TT text="Select documents to reference"><div
-                    className="flex items-center justify-center w-12 h-12 bg-foreground rounded-xl
-                    transition-all hover:scale-105 duration-300 hover:cursor-pointer"
-                    onClick={handleResponse}
-                  >
-                    <Image
-                      src={documentLogo}
-                      alt="+"
-                      width={256}
-                      height={256}
-                      className="p-1.5 w-10 h-10"
-                    />
-                  </div></TT>
+                <AddPdfToChat chatId={chatId} user={user} dbUser={dbUser} setChats={setChats}/>
                 <div
                   className="flex items-center justify-center w-12 h-12 bg-foreground rounded-xl
                     transition-all hover:scale-105 duration-300 hover:cursor-pointer"

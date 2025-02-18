@@ -108,7 +108,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                       className="text-lg "
                       
                     >
-                      {chat?.title || "Untitled Chat"}
+                      {chat?.title?.length > 20 ? chat.title.slice(0, 20) + "..." : chat?.title || "Untitled Chat"}
                     </h2>
                   )}
                   <DetailsPopup

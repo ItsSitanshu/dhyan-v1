@@ -28,6 +28,31 @@ const APIfeedback = async (model_extraction: any, stars: any) => {
   }
 }
 
+const fetchChats = async (supabase: any, user: any, setChats: (chats: any) => void) => {
+  if (!user) return;
+
+  try {
+    const { data, error } = await supabase
+      .from("chats")
+      .select("*")
+      .eq("user_id", user.id)
+
+    
+    if (error && error.code !== "PGRST116") {
+      console.error("Error fetching chats:", error);
+      return;
+    }
+
+    if (data) {
+      setChats(data);
+      console.log(data);
+
+    }
+  } catch (error) {
+    console.error("Error fetching chats:", error);
+  }
+};
+
 const APITitle = async (history: any) => {
   try {
     const response = await axios.post('http://localhost:5000/api/title', {
@@ -79,4 +104,4 @@ const getSimulationTitle = (simId: string) => {
   return simulationTitles[simId] || "Unknown Simulation";
 };
 
-export { APITutor, APITitle, APIfeedback, APIExtract, getTokenCount, trimToMaxTokens, getSimulationTitle };
+export { APITutor, APITitle, APIfeedback, APIExtract, getTokenCount, trimToMaxTokens, getSimulationTitle, fetchChats };
